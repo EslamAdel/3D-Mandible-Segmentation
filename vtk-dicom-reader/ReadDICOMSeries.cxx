@@ -10,6 +10,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkActor.h>
+#include <vtkImagePlaneWidget.h>
 // headers needed for this example
 #include <vtkImageViewer2.h>
 #include <vtkDICOMImageReader.h>
@@ -37,7 +38,7 @@ class myVtkInteractorStyleImage : public vtkInteractorStyleImage
 {
 public:
    static myVtkInteractorStyleImage* New();
-   vtkTypeMacro(myVtkInteractorStyleImage, vtkInteractorStyleImage);
+//   vtkTypeMacro(myVtkInteractorStyleImage, vtkInteractorStyleImage);
  
 protected:
    vtkImageViewer2* _ImageViewer;
@@ -102,7 +103,7 @@ protected:
    virtual void OnMouseWheelForward() {
       //std::cout << "Scrolled mouse wheel forward." << std::endl;
       MoveSliceForward();
-      // don't forward events, otherwise the image will be zoomed 
+      // don't forward events, otherwise the image will be zoomed
       // in case another interactorstyle is used (e.g. trackballstyle, ...)
       // vtkInteractorStyleImage::OnMouseWheelForward();
    }
@@ -113,13 +114,13 @@ protected:
       if(_Slice > _MinSlice) {
          MoveSliceBackward();
       }
-      // don't forward events, otherwise the image will be zoomed 
+      // don't forward events, otherwise the image will be zoomed
       // in case another interactorstyle is used (e.g. trackballstyle, ...)
       // vtkInteractorStyleImage::OnMouseWheelBackward();
    }
 };
  
-vtkStandardNewMacro(myVtkInteractorStyleImage);
+vtkStandardNewMacro(myVtkInteractorStyleImage)
  
  
 int main(int argc, char* argv[])
@@ -146,6 +147,11 @@ int main(int argc, char* argv[])
       vtkSmartPointer<vtkImageViewer2>::New();
    imageViewer->SetInputConnection(reader->GetOutputPort());
  
+   vtkSmartPointer<vtkImagePlaneWidget> planeWidget =
+           vtkSmartPointer<vtkImagePlaneWidget> ::New();
+
+   planeWidget->SetInputConnection(reader->GetOutputPort());
+
    // slice status message
    vtkSmartPointer<vtkTextProperty> sliceTextProp = vtkSmartPointer<vtkTextProperty>::New();
    sliceTextProp->SetFontFamilyToCourier();
