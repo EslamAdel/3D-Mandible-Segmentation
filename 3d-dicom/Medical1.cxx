@@ -34,6 +34,7 @@
 #include <vtkDataArray.h>
 #include <vtkIdTypeArray.h>
 #include <vtkImageShiftScale.h>
+#include <vtkThresholdPoints.h>
 
 int main (int argc, char *argv[])
 {
@@ -162,24 +163,33 @@ int main (int argc, char *argv[])
     vtkImageData* rescaledImageData = shifter->GetOutput();
     short* rescaledValue = (short*) rescaledImageData->GetScalarPointer(pointijk);
 
+    vtkThresholdPoints * thresholdedVolume = vtkThresholdPoints::New();
+    thresholdedVolume->SetInputConnection(shifter->GetOutputPort());
+    thresholdedVolume->ThresholdByUpper(-100);
+    thresholdedVolume->Update();
+
+
     //=======================================================================================
 
     // An isosurface, or contour value of 500
     // Once generated, a vtkPolyDataNormals filter is used to create normals
     // for smooth surface shading during rendering.
-    vtkSmartPointer<vtkContourFilter> isoExtractor =
-            vtkSmartPointer<vtkContourFilter>::New();
-    isoExtractor->SetInputConnection(shifter->GetOutputPort());
-    isoExtractor->SetValue(0, 1300);
+//    vtkSmartPointer<vtkContourFilter> isoExtractor =
+//            vtkSmartPointer<vtkContourFilter>::New();
+//    isoExtractor->SetInputConnection(thresholdedVolume->GetOutputPort());
+//    isoExtractor->SetValue(0, 1);
 
     vtkSmartPointer<vtkPolyDataNormals> dataNormals =
             vtkSmartPointer<vtkPolyDataNormals>::New();
-    dataNormals->SetInputConnection(isoExtractor->GetOutputPort());
+    dataNormals->SetInputConnection(thresholdedVolume->GetOutputPort());
     dataNormals->SetFeatureAngle(60.0);
+
+    double range[2];
+    thresholdedVolume->GetOutput()->GetScalarRange(range);
 
     vtkSmartPointer<vtkPolyDataMapper> dataMapper =
             vtkSmartPointer<vtkPolyDataMapper>::New();
-    dataMapper->SetInputConnection(dataNormals->GetOutputPort());
+    dataMapper->SetInputConnection(thresholdedVolume->GetOutputPort());
     dataMapper->ScalarVisibilityOff();
 
     vtkSmartPointer<vtkActor> extractedData =
