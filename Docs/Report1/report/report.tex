@@ -9,6 +9,30 @@
 % Add a list of new commands 
 \include{commands}
 
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
 %******************************************************************************
 % DOCUMENT STARTS HERE 
 %******************************************************************************
@@ -16,11 +40,11 @@
 
 % TITLE 
 \title{\rmfamily\normalfont\spacedallcaps{
-Sprint Report \#{i}
+Report \#{1}
 }}
 
 % PROJECT NAME -> ADD YOUR PROJECT NAME HERE
-\author{{\small PROJECT NAME}}
+\author{{\small Automatic Mandible Segmentation Using VTK}}
 
 % AUTOMATIC DATE -> DON'T CHANGE MANUALLY
 \date{\footnotesize{\today}}
@@ -40,64 +64,90 @@ Sprint Report \#{i}
 %******************************************************************************
 % Report Content
 %******************************************************************************
-\section{Sprint Details}
+\section{Report Details}
 \begin{center}
 \begin{tabular}{ l | c }
 \hline 
-Sprint ID & i  \\ % Change the sprint ID here 
+Report ID & 1  \\ % Change the sprint ID here 
 \hline 
-Sprint Duration & 2 Weeks \\ % Change the duration here 
+Report Duration & 1 Week \\ % Change the duration here 
 \hline 
-Sprint Beginning & 06.09.2015 \\ % Change the start data here
+Beginning & 17.10.2016 \\ % Change the start data here
 \hline 
-Sprint End & 18.09.2015 \\ % Change the end data here
+End & 24.10.20.16 \\ % Change the end data here
 \hline 
 \end{tabular}
 \end{center}
 
-\section{Objectives}
-\subsection{Original Sprint Objectives}
+%\section{Objectives}
+\section{Original Objectives}
 \begin{enumerate}
-\item Objective 1
-\item Objective 2
-\item Objective 3
+\item Rescalling scalar Values to pick up negative scalars.
+\item Accessing scalar value of a Pixel from its Coordinates (i, j, k).
+\item Thresholding to segment bone structures.
+\item Connect VTK with Qt for GUI Design.
+\item Reading Master Thesis and understanding the Algorithm.
+\item Implement lableling and connectivity algorithm for segmentation.
 \end{enumerate}
 
-\subsection{Accomplished Objectives}
-\begin{enumerate}
-\item Objective 1
-\item Objective 2
-\end{enumerate}
+\section{Accomplished Objectives}
+\subsection{Rescalling scalar Values to pick up negative scalars}
+\textit{GetPixelRepresentation()} method of \textit{vtkDICOMImageReader} tells us whether stored values signed or unsigned, A zero is a unsigned quantity. A one indicates a signed quantity.
+To rescale data we must have the rescale slope and rescale offset As the Equation is 
+\begin{equation}
+final Value = Slope* initial Value + Offset 
+\end{equation}
+and We can obtain them from \textit{GetRescaleOffset()} and \textit{GetRescaleSlope()} methods of \textit{vtkDICOMImageReader}. 
+We Also have to know the number of bits for each pixel and data type used. So use \textit{GetBitsAllocated()} and  \textit{GetDataScalarType()} methods of \textit{vtkDICOMImageReader}, Check vtkType.h (Note : VTK\_SHORT = 4).
 
-\subsection{Missed Objectives}
-\begin{enumerate}
-\item Objective 3
-\end{enumerate}
+Now use \textit{vtkImageShiftScale} to rescale the values  as follow :
 
-\subsection{Are We on Track ? }
-That's a YES/NO question. 
+\begin{lstlisting}
+vtkImageShiftScale * shifter = vtkImageShiftScale::New();
 
-\subsubsection{Can the team accelerate their progress during the next sprint?}
-That's a YES/NO question. 
+//set the scalar slope and offset     
+//Note offset obtained by GetRescaleOffset() must be reversed      
+shifter->SetScale(rescaleSlope);
+shifter->SetShift(-1*rescaleOffset);
+    
+//Set data type to store  pixel values
+shifter->SetOutputScalarTypeToShort();
+       
+//Get Data From Dicom Reader     
+shifter->SetInputConnection(reader->GetOutputPort());
+shifter->Update();
 
-\subsubsection{Are there any technical problems in this sprint?}
-If YES, list all the problems the team has faced during the sprint.  
-\begin{enumerate}
-\item Problem 1
-\item Problem 2
-\item Problem 3
-\end{enumerate}
+//Now Get Image Data after re-scaling    
+vtkImageData* rescaledImageData = shifter->GetOutput();
 
+\end{lstlisting}
 
-\section{Theory \& Concepts}
-What are the new concepts and theoretical topics the team has gained? 
+\subsection{Accessing scalar value of a Pixel from its Coordinates (i, j, k)}
+\textit{GetScalePointer(double point[3])} method of \textit{vtkImageData} object returns a pointer to the scalar value at specific i, j, and k stored in point[3] array, So we can access the scalar value of each point in the 3D volume.
 
-\section{Tools}
-What are the new tools the team has gained? 
+\subsection{Thresholding to segment bone structures}
+The Next Step is to threshold the data to emphasis only on the bone structure, 1200 is a good threshold after rescaling the data that will cull out the skin and soft tissues, vtk has a \textit{vtkThresholdPoints} class and we can
+set the upper and lower threshold of the data and apply thresholding in different manners like \textit{ThresholdByUpper()} 
+or \textit{ThresholdByLower()}, and so on.
 
-\section{Current Project Status}
-Summarize the current status of the project \cite{Figueredo:2009dg}. 
+But the problem of this class is that i can not access data points as in \textit{vtkImageData} class So I think the best way 
+is to do it manually using an if condition to get values upper certain threshold.
 
+\subsection{Connect VTK with Qt for GUI Design}
+I think we will need to design a Graphical User Interface to enable the user to load different volumes and initialize the volume of interest  and to do some other functions, unfortunately VTK was built without enabling Qt ( C++ GUI Library). So I have to rebuild the VTK project and enable Qt module and successfally running a Simple GUI example with VTK. 
+
+\subsection{Reading Master Thesis and understanding the Algorithm}
+I have read the mathods cahpter but I was confused, What is the function of separation line in all slides?, Why to check the connectivity of only 13 points of neighbours?, what is the omputational complexity of these algorithm and can we speed it up?. 
+\section{Missed Objectives}
+\subsection{Understanding the Segmentation Algorithm}
+It was difficult for me to understand the total algorithm.
+\subsection{Implement lableling and connectivity algorithm for segmentation}
+I have no enough time to implement the algorithm, and It is also not clear for me.
+\section{Other Ideas}
+\subsection{ITK}
+I have found another library (ITK) for segmentation and registration, I have only installed it but I don't know how to use it and how to connect it with VTK, I need further research to know if this library will be useful for us or not.
+
+ 
 %\section{Next Step}
 %Summarize the main points that will be taken into consideration in the next sprint
 
@@ -110,19 +160,7 @@ Summarize the current status of the project \cite{Figueredo:2009dg}.
 
 
     
-    
    
-    
-% bib stuff
-\nocite{*}
-\addtocontents{toc}{\protect\vspace{\beforebibskip}}
-\addcontentsline{toc}{section}{\refname}    
-    
-%******************************************************************************
-% REFERENCES (IF ANY)
-%******************************************************************************    
-\bibliographystyle{plain}
-\bibliography{references}
     
 %******************************************************************************
 % DOCUMENT ENDS HERE 
