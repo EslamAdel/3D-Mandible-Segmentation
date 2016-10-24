@@ -1,0 +1,130 @@
+%******************************************************************************
+% KOMA-Script article scrartcl
+%******************************************************************************
+\documentclass[10pt, b5paper]{article} 
+
+% Add here all the packages that will be used in the document
+\include{packages}
+
+% Add a list of new commands 
+\include{commands}
+
+%******************************************************************************
+% DOCUMENT STARTS HERE 
+%******************************************************************************
+\begin{document}
+
+% TITLE 
+\title{\rmfamily\normalfont\spacedallcaps{
+Sprint Report \#{i}
+}}
+
+% PROJECT NAME -> ADD YOUR PROJECT NAME HERE
+\author{{\small PROJECT NAME}}
+
+% AUTOMATIC DATE -> DON'T CHANGE MANUALLY
+\date{\footnotesize{\today}}
+
+% MAKE THE TITLE -> DON'T CHANGE MANUALLY
+\maketitle
+
+% DON'T INCLUDE THE ABSTRACT FOR THE MOMENT
+% \include{abstract}
+ 
+%******************************************************************************
+% TABLE OF CONTENTS (uncomment to show / comment to hide)
+%******************************************************************************     
+% \tableofcontents
+
+
+%******************************************************************************
+% Report Content
+%******************************************************************************
+\section{Sprint Details}
+\begin{center}
+\begin{tabular}{ l | c }
+\hline 
+Sprint ID & i  \\ % Change the sprint ID here 
+\hline 
+Sprint Duration & 2 Weeks \\ % Change the duration here 
+\hline 
+Sprint Beginning & 06.09.2015 \\ % Change the start data here
+\hline 
+Sprint End & 18.09.2015 \\ % Change the end data here
+\hline 
+\end{tabular}
+\end{center}
+
+\section{Objectives}
+\subsection{Original Sprint Objectives}
+\begin{enumerate}
+\item Objective 1
+\item Objective 2
+\item Objective 3
+\end{enumerate}
+
+\subsection{Accomplished Objectives}
+\begin{enumerate}
+\item Objective 1
+\item Objective 2
+\end{enumerate}
+
+\subsection{Missed Objectives}
+\begin{enumerate}
+\item Objective 3
+\end{enumerate}
+
+\subsection{Are We on Track ? }
+That's a YES/NO question. 
+
+\subsubsection{Can the team accelerate their progress during the next sprint?}
+That's a YES/NO question. 
+
+\subsubsection{Are there any technical problems in this sprint?}
+If YES, list all the problems the team has faced during the sprint.  
+\begin{enumerate}
+\item Problem 1
+\item Problem 2
+\item Problem 3
+\end{enumerate}
+
+
+\section{Theory \& Concepts}
+What are the new concepts and theoretical topics the team has gained? 
+
+\section{Tools}
+What are the new tools the team has gained? 
+
+\section{Current Project Status}
+Summarize the current status of the project \cite{Figueredo:2009dg}. 
+
+%\section{Next Step}
+%Summarize the main points that will be taken into consideration in the next sprint
+
+%\section{Next Sprint Objectives}
+%\begin{enumerate}
+%\item Objective 1
+%\item Objective 2
+%\item Objective 2
+%\end{enumerate}
+
+
+    
+    
+   
+    
+% bib stuff
+\nocite{*}
+\addtocontents{toc}{\protect\vspace{\beforebibskip}}
+\addcontentsline{toc}{section}{\refname}    
+    
+%******************************************************************************
+% REFERENCES (IF ANY)
+%******************************************************************************    
+\bibliographystyle{plain}
+\bibliography{references}
+    
+%******************************************************************************
+% DOCUMENT ENDS HERE 
+%******************************************************************************
+\end{document}
