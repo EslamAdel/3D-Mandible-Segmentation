@@ -1,4 +1,16 @@
 *.user
 build*
 datasets
+bin
+*.aux
+*.log
+*.bbl
+*.blg
+*.out 
+*.gz
+*.zip
+*.out
+*.swp
+*.pdf
+
 
