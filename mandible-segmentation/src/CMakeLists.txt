@@ -11,6 +11,7 @@ include_directories( ${PROJECT_BINARY_DIR} )
 SET( MANDIBLE_SEGMENTATION_SOURCE_FILES
      system/Logger.cpp
      rendering/Render3D.cpp
+     rendering/Render2D.cpp
     )
 
 ### Adding the header files to the CMake source tree
@@ -19,6 +20,7 @@ SET( MANDIBLE_SEGMENTATION_HEADER_FILES
      system/Colors.hh
      system/LogLevel.hh
      rendering/Render3D.h
+     rendering/Render2D.h
    )
 
 

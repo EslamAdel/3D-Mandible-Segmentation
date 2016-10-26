@@ -119,36 +119,36 @@ void Render3D::rayCastingRendering()
     volumeColor->AddRGBPoint(1150, 1.0, 1.0, 0.9);
 
     vtkSmartPointer<vtkPiecewiseFunction> volumeScalarOpacity =
-        vtkSmartPointer<vtkPiecewiseFunction>::New();
-      volumeScalarOpacity->AddPoint(0,    0.0);
-      volumeScalarOpacity->AddPoint(500,  0.25);
-      volumeScalarOpacity->AddPoint(1000, 0.5);
-      volumeScalarOpacity->AddPoint(1150, 0.85);
+            vtkSmartPointer<vtkPiecewiseFunction>::New();
+    volumeScalarOpacity->AddPoint(0,    0.0);
+    volumeScalarOpacity->AddPoint(500,  0.25);
+    volumeScalarOpacity->AddPoint(1000, 0.5);
+    volumeScalarOpacity->AddPoint(1150, 0.85);
 
-      vtkSmartPointer<vtkPiecewiseFunction> volumeGradientOpacity =
-        vtkSmartPointer<vtkPiecewiseFunction>::New();
-      volumeGradientOpacity->AddPoint(0,   0.0);
-      volumeGradientOpacity->AddPoint(90,  0.5);
-      volumeGradientOpacity->AddPoint(100, 1.0);
+    vtkSmartPointer<vtkPiecewiseFunction> volumeGradientOpacity =
+            vtkSmartPointer<vtkPiecewiseFunction>::New();
+    volumeGradientOpacity->AddPoint(0,   0.0);
+    volumeGradientOpacity->AddPoint(90,  0.5);
+    volumeGradientOpacity->AddPoint(100, 1.0);
 
-      vtkSmartPointer<vtkVolumeProperty> volumeProperty =
-         vtkSmartPointer<vtkVolumeProperty>::New();
-       volumeProperty->SetColor(volumeColor);
-       volumeProperty->SetScalarOpacity(volumeScalarOpacity);
-       volumeProperty->SetGradientOpacity(volumeGradientOpacity);
-       volumeProperty->SetInterpolationTypeToLinear();
-       volumeProperty->ShadeOn();
-       volumeProperty->SetAmbient(0.4);
-       volumeProperty->SetDiffuse(0.6);
-       volumeProperty->SetSpecular(0.2);
+    vtkSmartPointer<vtkVolumeProperty> volumeProperty =
+            vtkSmartPointer<vtkVolumeProperty>::New();
+    volumeProperty->SetColor(volumeColor);
+    volumeProperty->SetScalarOpacity(volumeScalarOpacity);
+    volumeProperty->SetGradientOpacity(volumeGradientOpacity);
+    volumeProperty->SetInterpolationTypeToLinear();
+    volumeProperty->ShadeOn();
+    volumeProperty->SetAmbient(0.4);
+    volumeProperty->SetDiffuse(0.6);
+    volumeProperty->SetSpecular(0.2);
 
-       vtkSmartPointer<vtkVolume> volume =
-          vtkSmartPointer<vtkVolume>::New();
-        volume->SetMapper(volumeMapper);
-        volume->SetProperty(volumeProperty);
-        renderer_->AddViewProp(volume);
+    vtkSmartPointer<vtkVolume> volume =
+            vtkSmartPointer<vtkVolume>::New();
+    volume->SetMapper(volumeMapper);
+    volume->SetProperty(volumeProperty);
+    renderer_->AddViewProp(volume);
 
-        updateRenderer();
+    updateRenderer();
 
 
 }

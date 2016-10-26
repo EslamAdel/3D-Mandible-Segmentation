@@ -79,6 +79,8 @@ protected:
 
 vtkStandardNewMacro(myVtkInteractorStyleImage)
 
+vtkSmartPointer<myVtkInteractorStyleImage> myInteractorStyle =
+        vtkSmartPointer<myVtkInteractorStyleImage>::New();
 Render2D::Render2D()
 {
     LOG_DEBUG("Initializing Slicer");
@@ -91,13 +93,11 @@ Render2D::Render2D()
     rwInteractor_->SetRenderWindow(renderWindow_);
     reslicer_ = vtkSmartPointer<vtkImageReslice>::New();
     imViewer_ = vtkSmartPointer<vtkResliceImageViewer>::New();
-    imViewer_->SetInputData(reslicer_->GetOutput());
-    vtkSmartPointer<myVtkInteractorStyleImage> myInteractorStyle =
-            vtkSmartPointer<myVtkInteractorStyleImage>::New();
+
+
 
     // make imageviewer2 and sliceTextMapper visible to our interactorstyle
     // to enable slice status message updates when scrolling through the slices
-    myInteractorStyle->SetImageViewer(imViewer_.Get());
     rwInteractor_->SetInteractorStyle(myInteractorStyle);
     isDataLoaded_ = false;
     isDataRescaled_ = false;
@@ -123,7 +123,13 @@ void Render2D::rescaleData(float scale, float shift)
     shifter_->SetShift(shift);
     shifter_->SetOutputScalarTypeToUnsignedShort();
     shifter_->SetInputConnection(reader_->GetOutputPort());
-    reslicer_->SetInputConnection(reader_->GetOutputPort());
+    reslicer_->SetInputConnection(shifter_->GetOutputPort());
+    imViewer_->SetInputData(reader_->GetOutput());
+    imViewer_->SetSliceOrientation(2);
+    imViewer_->SetResliceModeToAxisAligned();
+    LOG_DEBUG("Min Slides = %d, max = %d", imViewer_->GetSliceMin(), imViewer_->GetSliceMax());
+    myInteractorStyle->SetImageViewer(imViewer_.Get());
+    imViewer_->SetupInteractor(rwInteractor_);
     isDataRescaled_=true;
 }
 
@@ -210,7 +216,8 @@ void Render2D::updateRenderer()
             vtkSmartPointer<vtkImageActor>::New();
     actor->GetMapper()->SetInputConnection(color->GetOutputPort());
     renderer_->AddActor(actor);
-    renderWindow_->Render();
+    imViewer_->GetRenderer()->ResetCamera();
+    imViewer_->Render();
     rwInteractor_->Start();
 
 }
