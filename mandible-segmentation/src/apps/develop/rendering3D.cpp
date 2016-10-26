@@ -1,4 +1,5 @@
 #include "Render3D.h"
+#include "Render2D.h"
 #include <memory>
 
 int main(int argc , char ** argv)
@@ -9,14 +10,15 @@ int main(int argc , char ** argv)
         return EXIT_FAILURE;
     }
 
-    std::unique_ptr<Render3D> myRenderer(new Render3D);
+    Render2D* myRenderer = new Render2D;
+//    std::unique_ptr<Render3D> myRenderer(new Render3D);
 //    Render3D* myRenderer = new Render3D;
     myRenderer->loadData(argv[1]);
-    myRenderer->rescaleData(myRenderer->getScale(),
-                            myRenderer->getShift());
+    myRenderer->rescaleData(myRenderer->getScaleVaue(),
+                            myRenderer->getShiftValue());
 
 //    myRenderer->cubeMarchingExtraction(1200);
-    myRenderer->rayCastingRendering();
+    myRenderer->setAxialSlicing();
 
 
     return EXIT_SUCCESS;
