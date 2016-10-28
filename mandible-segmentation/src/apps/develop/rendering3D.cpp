@@ -14,11 +14,9 @@ int main(int argc , char ** argv)
 //    std::unique_ptr<Render3D> myRenderer(new Render3D);
 //    Render3D* myRenderer = new Render3D;
     myRenderer->loadData(argv[1]);
-    myRenderer->rescaleData(myRenderer->getScaleVaue(),
-                            myRenderer->getShiftValue());
 
 //    myRenderer->cubeMarchingExtraction(1200);
-    myRenderer->setAxialSlicing();
+    myRenderer->setCronalSlicing();
 
 
     return EXIT_SUCCESS;

@@ -145,8 +145,9 @@ int main(int argc, char* argv[])
    // Visualize
    vtkSmartPointer<vtkImageViewer2> imageViewer =
       vtkSmartPointer<vtkImageViewer2>::New();
+   imageViewer->SetSliceOrientationToYZ();
    imageViewer->SetInputConnection(reader->GetOutputPort());
- 
+   
    vtkSmartPointer<vtkImagePlaneWidget> planeWidget =
            vtkSmartPointer<vtkImagePlaneWidget> ::New();
 

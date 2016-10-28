@@ -79,28 +79,20 @@ protected:
 
 vtkStandardNewMacro(myVtkInteractorStyleImage)
 
-vtkSmartPointer<myVtkInteractorStyleImage> myInteractorStyle =
-        vtkSmartPointer<myVtkInteractorStyleImage>::New();
 Render2D::Render2D()
 {
     LOG_DEBUG("Initializing Slicer");
 
-
-    renderer_ = vtkSmartPointer<vtkRenderer>::New();
-    renderWindow_ = vtkSmartPointer<vtkRenderWindow>::New();
-    renderWindow_->AddRenderer(renderer_);
-    rwInteractor_ = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    rwInteractor_->SetRenderWindow(renderWindow_);
-    reslicer_ = vtkSmartPointer<vtkImageReslice>::New();
+    vtkSmartPointer<myVtkInteractorStyleImage> myInteractorStyle =
+            vtkSmartPointer<myVtkInteractorStyleImage>::New();
     imViewer_ = vtkSmartPointer<vtkResliceImageViewer>::New();
-
-
+    rwInteractor_ = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    rwInteractor_->SetInteractorStyle(myInteractorStyle);
+    imViewer_->SetupInteractor(rwInteractor_);
 
     // make imageviewer2 and sliceTextMapper visible to our interactorstyle
     // to enable slice status message updates when scrolling through the slices
-    rwInteractor_->SetInteractorStyle(myInteractorStyle);
     isDataLoaded_ = false;
-    isDataRescaled_ = false;
 
 }
 
@@ -111,114 +103,36 @@ void Render2D::loadData(char *dirName)
     reader_->SetDirectoryName(dirName);
     reader_->Update();
     isDataLoaded_ = true;
-    setProjectionMatrices();
-}
-
-void Render2D::rescaleData(float scale, float shift)
-{
-    if(!isDataLoaded_)
-        LOG_ERROR("Load Data first");
-    shifter_ = vtkSmartPointer<vtkImageShiftScale>::New();
-    shifter_->SetScale(scale);
-    shifter_->SetShift(shift);
-    shifter_->SetOutputScalarTypeToUnsignedShort();
-    shifter_->SetInputConnection(reader_->GetOutputPort());
-    reslicer_->SetInputConnection(shifter_->GetOutputPort());
-    imViewer_->SetInputData(reader_->GetOutput());
-    imViewer_->SetSliceOrientation(2);
-    imViewer_->SetResliceModeToAxisAligned();
-    LOG_DEBUG("Min Slides = %d, max = %d", imViewer_->GetSliceMin(), imViewer_->GetSliceMax());
-    myInteractorStyle->SetImageViewer(imViewer_.Get());
-    imViewer_->SetupInteractor(rwInteractor_);
-    isDataRescaled_=true;
 }
 
 void Render2D::setAxialSlicing()
 {
-    if(!isDataRescaled_)
-        LOG_ERROR("Load and rescale data first");
-    reslicer_->SetResliceAxes(axial_);
-    updateRenderer();
+    if(!isDataLoaded_)
+        LOG_ERROR("Load and Load data first");
+    imViewer_->SetSliceOrientation(0);
+    imViewer_->SetInputData(reader_->GetOutput());
+    imViewer_->Render();
+    rwInteractor_->Start();
+
 }
 
 void Render2D::setCronalSlicing()
 {
-    if(!isDataRescaled_)
-        LOG_ERROR("Load and rescale data first");
-    reslicer_->SetResliceAxes(cronal_);
-    updateRenderer();
+    if(!isDataLoaded_)
+        LOG_ERROR("Load and Load data first");
+    imViewer_->SetSliceOrientation(1);
+    imViewer_->SetInputData(reader_->GetOutput());
+    imViewer_->Render();
+    rwInteractor_->Start();
 }
 
 void Render2D::setSagittalSLicing()
 {
-    if(!isDataRescaled_)
-        LOG_ERROR("Load and rescale data first");
-    reslicer_->SetResliceAxes(sagittal_);
-    updateRenderer();
-}
-
-float Render2D::getScaleVaue()
-{
-    return reader_->GetRescaleSlope();
-}
-
-float Render2D::getShiftValue()
-{
-    return -1 * reader_->GetRescaleOffset();
-}
-
-void Render2D::setProjectionMatrices()
-{
     if(!isDataLoaded_)
-        LOG_ERROR("Load Data First");
-    axial_ = vtkSmartPointer<vtkMatrix4x4>::New();
-    cronal_ = vtkSmartPointer<vtkMatrix4x4>::New();
-    sagittal_ = vtkSmartPointer<vtkMatrix4x4>::New();
-    int dimentions[3];
-    reader_->GetOutput()->GetDimensions(dimentions);
-    double axialMat[16] = {1, 0, 0, round(dimentions[0]/2),
-                           0, 1, 0, round(dimentions[1]/2),
-                           0, 0, 1, round(dimentions[2]/2),
-                           0, 0, 0, 1};
-
-    double cronalMat[16] = {1, 0, 0, round(dimentions[0]/2),
-                            0, 0, 1, round(dimentions[1]/2),
-                            0,-1, 0, round(dimentions[2]/2),
-                            0, 0, 0, 1};
-
-    double sagittalMat[16] = {0, 0,-1, round(dimentions[0]/2),
-                              1, 0, 0, round(dimentions[1]/2),
-                              0,-1, 0, round(dimentions[2]/2),
-                              0, 0, 0, 1};
-    axial_->DeepCopy(axialMat);
-    cronal_->DeepCopy(cronalMat);
-    sagittal_->DeepCopy(sagittalMat);
-}
-
-void Render2D::updateRenderer()
-{
-    vtkSmartPointer<vtkLookupTable> table =
-            vtkSmartPointer<vtkLookupTable>::New();
-    table->SetRange(0, 4095); // image intensity range
-    table->SetValueRange(0.0, 1.0); // from black to white
-    table->SetSaturationRange(0.0, 0.0); // no color saturation
-    table->SetRampToLinear();
-    table->Build();
-
-    // Map the image through the lookup table
-    vtkSmartPointer<vtkImageMapToColors> color =
-            vtkSmartPointer<vtkImageMapToColors>::New();
-    color->SetLookupTable(table);
-    color->SetInputConnection(reslicer_->GetOutputPort());
-
-    // Display the image
-    vtkSmartPointer<vtkImageActor> actor =
-            vtkSmartPointer<vtkImageActor>::New();
-    actor->GetMapper()->SetInputConnection(color->GetOutputPort());
-    renderer_->AddActor(actor);
-    imViewer_->GetRenderer()->ResetCamera();
+        LOG_ERROR("Load and load data first");
+    imViewer_->SetSliceOrientation(2);
+    imViewer_->SetInputData(reader_->GetOutput());
     imViewer_->Render();
     rwInteractor_->Start();
-
 }
 

@@ -27,32 +27,15 @@ class Render2D
 public:
     explicit Render2D();
     void loadData(char* dirName);
-    void rescaleData(float scale, float shift);
     void setAxialSlicing();
     void setCronalSlicing();
     void setSagittalSLicing();
-    float getScaleVaue();
-    float getShiftValue();
-
-private:
-    void setProjectionMatrices();
-    void updateRenderer();
-
 
 private:
     vtkSmartPointer<vtkDICOMImageReader> reader_;
     vtkSmartPointer<vtkResliceImageViewer> imViewer_;
-    vtkSmartPointer<vtkRenderer> renderer_;
-    vtkSmartPointer<vtkRenderWindow> renderWindow_;
     vtkSmartPointer<vtkRenderWindowInteractor> rwInteractor_;
-    vtkSmartPointer<vtkImageReslice> reslicer_;
-    vtkSmartPointer<vtkImageShiftScale> shifter_;
-    vtkSmartPointer<vtkMatrix4x4> axial_;
-    vtkSmartPointer<vtkMatrix4x4> cronal_;
-    vtkSmartPointer<vtkMatrix4x4> sagittal_;
     bool isDataLoaded_;
-    bool isDataRescaled_;
-
 };
 
 
