@@ -1,4 +1,4 @@
-#include "Render3D.h"
+﻿#include "Render3D.h"
 
 Render3D::Render3D()
 {
@@ -24,6 +24,18 @@ void Render3D::loadData(char *dirName)
     reader_->SetDirectoryName(dirName);
     reader_->Update();
     isDataLoaded = true;
+}
+
+vtkSmartPointer<vtkImageShiftScale> Render3D::getShifter()
+{
+    return shifter_;
+}
+
+void Render3D::setShifter(vtkSmartPointer<vtkImageShiftScale> shifter)
+{
+    shifter_ = shifter;
+    isDataLoaded = true;
+    isDataRescaled = true;
 }
 
 float Render3D::getScale()
@@ -78,6 +90,8 @@ void Render3D::extractSurfaces(double isoValue)
 void Render3D::cubeMarchingExtraction(double isoValue)
 {
     LOG_DEBUG("Marching Cubes ");
+    if(!isDataRescaled)
+        LOG_ERROR("Rescale Data at First");
     marchCubes_ = vtkSmartPointer<vtkMarchingCubes>::New();
     marchCubes_->SetInputConnection(shifter_->GetOutputPort());
     marchCubes_->SetValue(0, isoValue);

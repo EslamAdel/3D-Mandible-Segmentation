@@ -1,6 +1,7 @@
 #include "Render3D.h"
 #include "Render2D.h"
 #include <memory>
+#include <thread>
 
 int main(int argc , char ** argv)
 {
@@ -10,13 +11,16 @@ int main(int argc , char ** argv)
         return EXIT_FAILURE;
     }
 
-    Render2D* myRenderer = new Render2D;
-//    std::unique_ptr<Render3D> myRenderer(new Render3D);
-//    Render3D* myRenderer = new Render3D;
-    myRenderer->loadData(argv[1]);
+    std::unique_ptr<Render3D> surfaceRenderer(new Render3D);
+    surfaceRenderer->loadData(argv[1]);
+    surfaceRenderer->rescaleData(surfaceRenderer->getScale(),
+                                 surfaceRenderer->getShift());
 
-//    myRenderer->cubeMarchingExtraction(1200);
-    myRenderer->setCronalSlicing();
+    surfaceRenderer->cubeMarchingExtraction(1200);
+
+    std::unique_ptr<Render3D> rayCastingRenderer(new Render3D);
+    rayCastingRenderer->setShifter(surfaceRenderer->getShifter());
+    rayCastingRenderer->rayCastingRendering();
 
 
     return EXIT_SUCCESS;

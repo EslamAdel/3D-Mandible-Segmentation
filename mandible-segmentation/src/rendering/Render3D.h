@@ -39,6 +39,10 @@ public:
      */
     void loadData(char* dirName);
 
+    vtkSmartPointer<vtkImageShiftScale> getShifter();
+
+    void setShifter(vtkSmartPointer<vtkImageShiftScale> shifter);
+
     /**
      * @brief getScale
      * @return
