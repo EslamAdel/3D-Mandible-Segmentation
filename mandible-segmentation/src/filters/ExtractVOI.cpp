@@ -16,15 +16,14 @@ void ExtractVOI::setRange(int xi, int xf, int yi, int yf, int zi, int zf)
                        zi, zf);
 
     extractor_->SetSampleRate(1, 1, 1);
+    extractor_->Update();
 
 }
 
-void ExtractVOI::setInputData(vtkImageData *data)
+void ExtractVOI::setInputData(vtkAlgorithmOutput* input)
 {
     LOG_DEBUG("Setting Input Data");
-    extractor_->SetInputData(data);
-    extractor_->ReleaseDataFlagOff();
-     extractor_->Update();
+    extractor_->SetInputConnection(input);
 }
 
 vtkImageData* ExtractVOI::getOutputData()

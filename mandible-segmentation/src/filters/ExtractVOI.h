@@ -33,7 +33,7 @@ public:
      * @brief setInputData
      * @param data
      */
-    void setInputData(vtkImageData* data);
+    void setInputData(vtkAlgorithmOutput* input);
 
     /**
      * @brief getOutputData
@@ -41,6 +41,7 @@ public:
      */
     vtkImageData* getOutputData();
 
+private:
 
     /**
      * @brief extractor_
