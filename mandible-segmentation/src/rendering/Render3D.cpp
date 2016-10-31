@@ -57,19 +57,20 @@ void Render3D::rescaleData(float scale, float shift)
     shifter_->SetScale(scale);
     shifter_->SetShift(shift);
     shifter_->SetOutputScalarTypeToUnsignedShort();
-    shifter_->SetInputConnection(reader_->GetOutputPort());
+    shifter_->SetInputData(reader_->GetOutput());
     shifter_->Update();
     isDataRescaled = true;
 }
 
-void Render3D::extractSurfaces(double isoValue)
+void Render3D::extractSurfaces(double isoValue, vtkDataObject* data)
 {
     LOG_DEBUG("Iso surface extraction for iso Value :");
     std::cout << isoValue << std::endl;
     if(!isDataRescaled)
         LOG_ERROR("Rescale Data at First");
     isoExtractor_ = vtkSmartPointer<vtkContourFilter>::New();
-    isoExtractor_->SetInputConnection(shifter_->GetOutputPort());
+//    isoExtractor_->SetInputConnection(shifter_->GetOutputPort());
+    isoExtractor_->SetInputData(data);
     isoExtractor_->SetValue(0, isoValue);
 
     vtkSmartPointer<vtkPolyDataNormals> dataNormals =

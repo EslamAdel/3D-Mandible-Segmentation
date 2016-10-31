@@ -1,7 +1,5 @@
 #include "Render3D.h"
-#include "Render2D.h"
 #include <memory>
-#include <thread>
 
 int main(int argc , char ** argv)
 {

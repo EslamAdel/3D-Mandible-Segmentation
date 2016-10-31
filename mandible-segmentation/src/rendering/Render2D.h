@@ -30,6 +30,8 @@ public:
     void setAxialSlicing();
     void setCronalSlicing();
     void setSagittalSLicing();
+    vtkSmartPointer<vtkDICOMImageReader> getReader();
+    void setReader(vtkSmartPointer<vtkDICOMImageReader> reader);
 
 private:
     vtkSmartPointer<vtkDICOMImageReader> reader_;

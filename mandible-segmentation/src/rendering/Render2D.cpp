@@ -111,6 +111,7 @@ void Render2D::setAxialSlicing()
         LOG_ERROR("Load and Load data first");
     imViewer_->SetSliceOrientation(0);
     imViewer_->SetInputData(reader_->GetOutput());
+    imViewer_->SetSlice(imViewer_->GetSliceMax()/2);
     imViewer_->Render();
     rwInteractor_->Start();
 
@@ -122,6 +123,7 @@ void Render2D::setCronalSlicing()
         LOG_ERROR("Load and Load data first");
     imViewer_->SetSliceOrientation(1);
     imViewer_->SetInputData(reader_->GetOutput());
+    imViewer_->SetSlice(imViewer_->GetSliceMax()/2);
     imViewer_->Render();
     rwInteractor_->Start();
 }
@@ -132,7 +134,19 @@ void Render2D::setSagittalSLicing()
         LOG_ERROR("Load and load data first");
     imViewer_->SetSliceOrientation(2);
     imViewer_->SetInputData(reader_->GetOutput());
+    imViewer_->SetSlice(imViewer_->GetSliceMax()/2);
     imViewer_->Render();
     rwInteractor_->Start();
+}
+
+vtkSmartPointer<vtkDICOMImageReader> Render2D::getReader()
+{
+    return reader_;
+}
+
+void Render2D::setReader(vtkSmartPointer<vtkDICOMImageReader> reader)
+{
+    reader_ = reader;
+    isDataLoaded_ = true;
 }
 

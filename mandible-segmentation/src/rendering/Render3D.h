@@ -39,8 +39,16 @@ public:
      */
     void loadData(char* dirName);
 
+    /**
+     * @brief getShifter
+     * @return
+     */
     vtkSmartPointer<vtkImageShiftScale> getShifter();
 
+    /**
+     * @brief setShifter
+     * @param shifter
+     */
     void setShifter(vtkSmartPointer<vtkImageShiftScale> shifter);
 
     /**
@@ -66,7 +74,7 @@ public:
      * @brief extractSurfaces
      * @param isoValue
      */
-    void extractSurfaces(double isoValue);
+    void extractSurfaces(double isoValue, vtkDataObject *data);
 
     /**
      * @brief cubeMarchingExtraction
