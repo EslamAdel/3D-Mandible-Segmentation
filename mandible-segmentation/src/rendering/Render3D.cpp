@@ -62,7 +62,7 @@ void Render3D::rescaleData(float scale, float shift)
     isDataRescaled = true;
 }
 
-void Render3D::extractSurfaces(double isoValue, vtkDataObject* data)
+void Render3D::extractSurfaces(double isoValue, vtkImageData* data)
 {
     LOG_DEBUG("Iso surface extraction for iso Value :");
     std::cout << isoValue << std::endl;
@@ -88,13 +88,13 @@ void Render3D::extractSurfaces(double isoValue, vtkDataObject* data)
     updateRenderer();
 }
 
-void Render3D::cubeMarchingExtraction(double isoValue)
+void Render3D::cubeMarchingExtraction(double isoValue, vtkImageData *data)
 {
     LOG_DEBUG("Marching Cubes ");
     if(!isDataRescaled)
         LOG_ERROR("Rescale Data at First");
     marchCubes_ = vtkSmartPointer<vtkMarchingCubes>::New();
-    marchCubes_->SetInputConnection(shifter_->GetOutputPort());
+    marchCubes_->SetInputData(data);
     marchCubes_->SetValue(0, isoValue);
 
     vtkSmartPointer<vtkPolyDataNormals> dataNormals =
@@ -113,7 +113,7 @@ void Render3D::cubeMarchingExtraction(double isoValue)
 
 }
 
-void Render3D::rayCastingRendering()
+void Render3D::rayCastingRendering(vtkImageData* data)
 {
     if(!isDataRescaled)
         LOG_ERROR("Rescale Data At First");
@@ -123,7 +123,7 @@ void Render3D::rayCastingRendering()
 
     vtkSmartPointer<vtkVolumeRayCastMapper> volumeMapper =
             vtkSmartPointer<vtkVolumeRayCastMapper>::New();
-    volumeMapper->SetInputConnection(shifter_->GetOutputPort());
+    volumeMapper->SetInputData(data);
     volumeMapper->SetVolumeRayCastFunction(rayCasting_);
 
     vtkSmartPointer<vtkColorTransferFunction>volumeColor =

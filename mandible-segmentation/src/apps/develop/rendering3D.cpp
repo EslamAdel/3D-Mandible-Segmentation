@@ -9,16 +9,18 @@ int main(int argc , char ** argv)
         return EXIT_FAILURE;
     }
 
-    std::unique_ptr<Render3D> surfaceRenderer(new Render3D);
+    Render3D* surfaceRenderer = new Render3D;
     surfaceRenderer->loadData(argv[1]);
     surfaceRenderer->rescaleData(surfaceRenderer->getScale(),
                                  surfaceRenderer->getShift());
 
-    surfaceRenderer->cubeMarchingExtraction(1200);
+    surfaceRenderer->cubeMarchingExtraction(1200, surfaceRenderer->
+                                            getShifter()->GetOutput());
 
-    std::unique_ptr<Render3D> rayCastingRenderer(new Render3D);
+    Render3D* rayCastingRenderer = new Render3D;
     rayCastingRenderer->setShifter(surfaceRenderer->getShifter());
-    rayCastingRenderer->rayCastingRendering();
+    rayCastingRenderer->rayCastingRendering(rayCastingRenderer->
+                                            getShifter()->GetOutput());
 
 
     return EXIT_SUCCESS;

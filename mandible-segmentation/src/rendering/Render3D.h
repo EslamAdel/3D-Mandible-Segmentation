@@ -74,18 +74,18 @@ public:
      * @brief extractSurfaces
      * @param isoValue
      */
-    void extractSurfaces(double isoValue, vtkDataObject *data);
+    void extractSurfaces(double isoValue, vtkImageData *data);
 
     /**
      * @brief cubeMarchingExtraction
      * @param isoValue
      */
-    void cubeMarchingExtraction(double isoValue);
+    void cubeMarchingExtraction(double isoValue, vtkImageData *data);
 
     /**
      * @brief rayCastingRendering
      */
-    void rayCastingRendering();
+    void rayCastingRendering(vtkImageData *data);
 
 private:
 
