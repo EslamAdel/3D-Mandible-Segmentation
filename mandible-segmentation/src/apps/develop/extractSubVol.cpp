@@ -17,8 +17,8 @@ int main(int argc , char ** argv)
     ExtractVOI* extractor = new ExtractVOI;
 
     extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
-    extractor->setRange(150, 350, 280, 400, 140, 230);
-    volRenderer->extractSurfaces(1200, extractor->getOutputData());
+    extractor->setRange(75, 450, 150, 420, 392, 525);
+    volRenderer->extractSurfaces(1300, extractor->getOutputData());
 //    volRenderer->rayCastingRendering(extractor->getOutputData());
     return EXIT_SUCCESS;
 
