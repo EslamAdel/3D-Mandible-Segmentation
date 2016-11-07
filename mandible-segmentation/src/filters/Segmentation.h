@@ -16,7 +16,8 @@ typedef std::unordered_map<vtkIdType, int> LabelsMap;
 struct Segment{
     int id_;
     double pointsCount_;
-    std::set<int> connectedSegmentsIds_;
+    double totalCount_;
+    QSet<int> connectedSegmentsIds_;
 };
 
 class Segmentation
@@ -37,6 +38,8 @@ private:
     std::list<vtkIdType>* getNeighbours_(int i, int j, int k);
     int createSegment();
     int updateSegmentsList(QSet<int> segmentsIds);
+    Segment getLargestSegment_();
+    void setOutputData(Segment largestSeg);
 
 private:
     vtkSmartPointer<vtkImageData> inputData_;

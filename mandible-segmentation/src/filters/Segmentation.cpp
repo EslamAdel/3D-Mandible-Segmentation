@@ -45,10 +45,14 @@ void Segmentation::startLabeling_()
         {
             for(int k = extent_[4] + 1; k <= extent_[5]; k++)
             {
-                setLabel_(i, j, k);
+                double data = inputData_->GetScalarComponentAsDouble(i, j, k, 0);
+                if(data > 0)
+                    setLabel_(i, j, k);
             }
         }
     }
+    Segment largestSegment =  getLargestSegment_();
+
 }
 
 void Segmentation::setLabel_(int i, int j, int k)
@@ -113,9 +117,61 @@ int Segmentation::updateSegmentsList(QSet<int> segmentsIds)
             if(seg.id_ == *segmentsIds.begin())
             {
                 seg.pointsCount_++;
+                for(int it : segmentsIds)
+                {
+                    if(it != seg.id_ && !seg.connectedSegmentsIds_.contains(it))
+                        seg.connectedSegmentsIds_.insert(it);
+                }
             }
         }
     }
 
     return *segmentsIds.begin();
+}
+
+Segment Segmentation::getLargestSegment_()
+{
+    double maxCount = segmentsList_.at(0).pointsCount_;
+    int largestSegmentId = 0;
+    for(Segment it : segmentsList_)
+    {
+        it.totalCount_ = it.pointsCount_;
+        for(int it2 : it.connectedSegmentsIds_)
+        {
+            it.totalCount_ += segmentsList_.at(it2).pointsCount_;
+        }
+        if(it.totalCount_ > maxCount)
+        {
+            maxCount = it.totalCount_;
+            largestSegmentId = it.id_;
+        }
+    }
+
+    return segmentsList_.at(largestSegmentId);
+}
+
+void Segmentation::setOutputData(Segment largestSeg)
+{
+    for(int i = extent_[0] + 1; i < extent_[1]; i++)
+    {
+        for(int j = extent_[2] + 1; j < extent_[3]; j++)
+        {
+            for(int k = extent_[4] + 1; k <= extent_[5]; k++)
+            {
+                int ijk[3] = {i, j,k};
+                int segId = pointsLabels_[inputData_->ComputePointId(ijk)];
+                double data = inputData_->GetScalarComponentAsDouble(i, j, k, 0);
+                if(largestSeg.connectedSegmentsIds_.contains(segId))
+                {
+                    outputData_->SetScalarComponentFromDouble(i, j, k, 0, data);
+                }
+                else
+                {
+                    outputData_->SetScalarComponentFromDouble(i, j, k, 0, 0);
+                }
+
+            }
+        }
+    }
+
 }
