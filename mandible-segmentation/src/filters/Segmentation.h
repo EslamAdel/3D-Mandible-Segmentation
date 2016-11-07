@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <set>
 #include <list>
+#include <QSet>
+#include <QList>
 
 #include "Logger.h"
 
@@ -33,12 +35,14 @@ private:
     void startLabeling_();
     void setLabel_(int i, int j, int k);
     std::list<vtkIdType>* getNeighbours_(int i, int j, int k);
+    int createSegment();
+    int updateSegmentsList(QSet<int> segmentsIds);
 
 private:
     vtkSmartPointer<vtkImageData> inputData_;
     vtkSmartPointer<vtkImageData> outputData_;
     LabelsMap pointsLabels_;
-    std::list<Segment> segmentsList_;
+    QList<Segment> segmentsList_;
     int* dimentions_;
     int* extent_;
     int currentId_;

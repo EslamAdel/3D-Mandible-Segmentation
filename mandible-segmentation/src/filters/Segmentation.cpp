@@ -55,7 +55,7 @@ void Segmentation::setLabel_(int i, int j, int k)
 {
     std::list<vtkIdType>* neighbours = getNeighbours_(i, j, k);
     int ijk[3] = {i, j, k};
-    std::set<int> segmentsIds;
+    QSet<int> segmentsIds;
     for(auto it = neighbours->begin(); it != neighbours->end(); ++it)
     {
         if(pointsLabels_[*it] >= 0)
@@ -65,33 +65,11 @@ void Segmentation::setLabel_(int i, int j, int k)
     }
     if(segmentsIds.empty())
     {
-        Segment newSegment;
-        newSegment.id_ = currentId_;
-        newSegment.pointsCount_ = 1;
-        newSegment.connectedSegmentsIds_.insert(currentId_);
-        segmentsList_.push_back(newSegment);
-        pointsLabels_[inputData_->ComputePointId(ijk)] = currentId_;
-        currentId_++;
+        pointsLabels_[inputData_->ComputePointId(ijk)] = createSegment();
     }
     else
     {
-        if(segmentsIds.size() > 1)
-        {
-           int id = *segmentsIds.begin();
-           for(auto it = segmentsList_.begin(); it != segmentsList_.end(); ++it)
-           {
-               if(it->id_ == id)
-               {
-                   it->pointsCount_++;
-                   for(auto it2 = segmentsIds.begin(); it2 != segmentsIds.end(); ++it)
-                   {
-                      it->connectedSegmentsIds_.insert(*it2);
-                      it->pointsCount_ +=
-                   }
-               }
-           }
-        }
-    pointsLabels_[inputData_->ComputePointId(ijk)] = *segmentsIds.begin();
+        pointsLabels_[inputData_->ComputePointId(ijk)] = updateSegmentsList(segmentsIds);
     }
 }
 
@@ -113,4 +91,31 @@ std::list<vtkIdType> *Segmentation::getNeighbours_(int i, int j, int k)
         }
     }
 
+}
+
+int Segmentation::createSegment()
+{
+    Segment newSegment;
+    newSegment.id_ = currentId_;
+    newSegment.pointsCount_ = 1;
+    segmentsList_.push_back(newSegment);
+    currentId_++;
+
+    return newSegment.id_;
+}
+
+int Segmentation::updateSegmentsList(QSet<int> segmentsIds)
+{
+    if(segmentsIds.size() > 1)
+    {
+        for(Segment seg : segmentsList_)
+        {
+            if(seg.id_ == *segmentsIds.begin())
+            {
+                seg.pointsCount_++;
+            }
+        }
+    }
+
+    return *segmentsIds.begin();
 }
