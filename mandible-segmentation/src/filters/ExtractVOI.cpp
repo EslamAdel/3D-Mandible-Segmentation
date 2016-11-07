@@ -29,5 +29,8 @@ void ExtractVOI::setInputData(vtkAlgorithmOutput* input)
 vtkImageData* ExtractVOI::getOutputData()
 {
     LOG_DEBUG("Getting Output Data");
+    int* x = new int[3];
+    x = extractor_->GetOutput()->GetDimensions();
+    LOG_DEBUG("x = %d, y = %d, z = %d", x[0], x[1], x[2]);
     return extractor_->GetOutput();
 }
