@@ -31,11 +31,11 @@ void Segmentation::createOutputData_()
 
 void Segmentation::initializeLabelMap_()
 {
-    for(int i = extent_[0] + 1; i < extent_[1]; i++)
+    for(int k = extent_[4] + 1; k <= extent_[5]; k++)
     {
-        for(int j = extent_[2] + 1; j < extent_[3]; j++)
+         for(int i = extent_[0] + 1; i < extent_[1]; i++)
         {
-            for(int k = extent_[4] + 2; k <= extent_[5]; k++)
+            for(int j = extent_[2] + 1; j < extent_[3]; j++)
             {
                 int ijk[3] = {i, j,k};
                 pointsLabels_[inputData_->ComputePointId(ijk)] = -1;
@@ -95,12 +95,9 @@ QList<vtkIdType> Segmentation::getNeighbours_(int i, int j, int k)
         {
             ijk[0] = i + x;
             ijk[1] = j + y;
-            ijk[2] = k;
+            ijk[2] = k ;
             neighbours.push_back(inputData_->ComputePointId(ijk));
             ijk[2] = k - 1;
-            neighbours.push_back(inputData_->ComputePointId(ijk));
-
-            ijk[2] = k - 2;
             neighbours.push_back(inputData_->ComputePointId(ijk));
         }
     }

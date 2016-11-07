@@ -24,7 +24,8 @@ int main(int argc , char ** argv)
     Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1200);
 
     Segmentation* mandibleSegmentation = new Segmentation(thresholdFilter->getThresholdedData());
-    volRenderer->rayCastingRendering(mandibleSegmentation->getSegmentedData());
+//    volRenderer->rayCastingRendering(mandibleSegmentation->getSegmentedData());
+    volRenderer->extractSurfaces(1200, mandibleSegmentation->getSegmentedData());
     return EXIT_SUCCESS;
 
 }
