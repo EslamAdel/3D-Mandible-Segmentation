@@ -3,7 +3,6 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
-#include <vtkPointData.h>
 
 #include "Logger.h"
 
@@ -12,7 +11,9 @@ class Thresholding
 public:
 
     /**
-     * @brief ExtractVOI
+     * @brief Thresholding
+     * @param input
+     * @param threshold
      */
     explicit Thresholding(vtkSmartPointer<vtkImageData> input,
                           unsigned short threshold);
