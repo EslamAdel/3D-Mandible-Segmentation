@@ -18,6 +18,7 @@ include(${VTK_USE_FILE})
 link_libraries(${VTK_LIBRARIES})
 
 include( Qt )
+include( OpenMP )
 
 # Add the src directory to the CMake tree and set the source/header/ui files
 add_subdirectory( src )

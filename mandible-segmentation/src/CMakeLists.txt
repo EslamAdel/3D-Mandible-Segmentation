@@ -13,6 +13,7 @@ SET( MANDIBLE_SEGMENTATION_SOURCE_FILES
      rendering/Render3D.cpp
      rendering/Render2D.cpp
      filters/ExtractVOI.cpp
+     filters/Thresholding.cpp
     )
 
 ### Adding the header files to the CMake source tree
@@ -23,6 +24,7 @@ SET( MANDIBLE_SEGMENTATION_HEADER_FILES
      rendering/Render3D.h
      rendering/Render2D.h
      filters/ExtractVOI.h
+     filters/Thresholding.h
    )
 
 
