@@ -33,7 +33,7 @@ void Thresholding::doThresholding_()
         {
             for(int k = extent_[4]; k <= extent_[5]; k++)
             {
-                double data = inputData_->GetScalarComponentAsDouble(i, j, k,0);
+                double data = inputData_->GetScalarComponentAsDouble(i, j, k, 0);
                 if(data < threshold_)
                 {
                     outputData_->SetScalarComponentFromDouble(i, j, k, 0, 0);

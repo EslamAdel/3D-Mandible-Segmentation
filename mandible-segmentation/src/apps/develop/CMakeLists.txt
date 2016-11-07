@@ -77,6 +77,31 @@ target_link_libraries( ${SUB_VOLUME_EXECUTABLE} ${MANDIBLE_SEGMENTATION_LIBRARY}
 ### Make sure to use the required Qt modules
 qt5_use_modules( ${SUB_VOLUME_EXECUTABLE} Core Widgets OpenGL Gui )
 
+######################################### segmentation_develop
+message("segmentation_develop ...")
+set( SEGMENTATION_EXECUTABLE "segmentation_develop" )
+
+
+
+### Application source/header/ui files
+set( SEGMENTATION_SOURCE_FILES segmentation.cpp )
+set( SEGMENTATION_HEADER_FILES )
+
+
+
+### Generate the executable
+add_executable( ${SEGMENTATION_EXECUTABLE}
+    ${SEGMENTATION_SOURCE_FILES}
+    ${SEGMENTATION_HEADER_FILES}
+)
+
+
+### Link the application against the oclMGPUVR library
+target_link_libraries( ${SEGMENTATION_EXECUTABLE} ${MANDIBLE_SEGMENTATION_LIBRARY} )
+
+### Make sure to use the required Qt modules
+qt5_use_modules( ${SEGMENTATION_EXECUTABLE} Core Widgets OpenGL Gui )
+
 
 ################################### install
 # Install the executable (generate with 'make install' in the bin directory)

@@ -3,7 +3,7 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
-#include <unordered_map>
+#include <QMap>
 #include <set>
 #include <list>
 #include <QSet>
@@ -11,9 +11,8 @@
 
 #include "Logger.h"
 
-typedef std::unordered_map<vtkIdType, int> LabelsMap;
-
 struct Segment{
+public:
     int id_;
     double pointsCount_;
     double totalCount_;
@@ -30,12 +29,14 @@ public:
      */
     explicit Segmentation(vtkSmartPointer<vtkImageData> input);
 
+    vtkSmartPointer<vtkImageData> getSegmentedData();
+
 private:
     void createOutputData_();
     void initializeLabelMap_();
     void startLabeling_();
     void setLabel_(int i, int j, int k);
-    std::list<vtkIdType>* getNeighbours_(int i, int j, int k);
+    QList<vtkIdType> getNeighbours_(int i, int j, int k);
     int createSegment();
     int updateSegmentsList(QSet<int> segmentsIds);
     Segment getLargestSegment_();
@@ -44,8 +45,8 @@ private:
 private:
     vtkSmartPointer<vtkImageData> inputData_;
     vtkSmartPointer<vtkImageData> outputData_;
-    LabelsMap pointsLabels_;
-    QList<Segment> segmentsList_;
+    QMap<vtkIdType, int> pointsLabels_;
+    QList<Segment>* segmentsList_;
     int* dimentions_;
     int* extent_;
     int currentId_;
