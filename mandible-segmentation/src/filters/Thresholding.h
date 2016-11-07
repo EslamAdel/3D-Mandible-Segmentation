@@ -25,7 +25,14 @@ public:
 
 private:
 
+    /**
+     * @brief doThresholding_
+     */
     void doThresholding_();
+
+    /**
+     * @brief createImageData_
+     */
     void createImageData_();
 
 private:
@@ -45,7 +52,14 @@ private:
      */
     unsigned short threshold_;
 
+    /**
+     * @brief dimentions_
+     */
     int* dimentions_;
+
+    /**
+     * @brief extent_
+     */
     int* extent_;
 };
 

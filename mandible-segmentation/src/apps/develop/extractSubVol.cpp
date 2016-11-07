@@ -1,5 +1,6 @@
 #include <ExtractVOI.h>
 #include <Render3D.h>
+#include <Thresholding.h>
 
 int main(int argc , char ** argv)
 {
@@ -18,8 +19,12 @@ int main(int argc , char ** argv)
 
     extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
     extractor->setRange(75, 450, 150, 420, 392, 525);
-    volRenderer->extractSurfaces(1300, extractor->getOutputData());
+
+
+    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1300);
+
 //    volRenderer->rayCastingRendering(extractor->getOutputData());
+    volRenderer->rayCastingRendering(thresholdFilter->getThresholdedData());
     return EXIT_SUCCESS;
 
 }
