@@ -1,5 +1,5 @@
+#include <QCoreApplication>
 #include "Render3D.h"
-#include <memory>
 
 int main(int argc , char ** argv)
 {

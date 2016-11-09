@@ -1,3 +1,4 @@
+#include <QCoreApplication>
 #include <ExtractVOI.h>
 #include <Render3D.h>
 #include <Thresholding.h>
