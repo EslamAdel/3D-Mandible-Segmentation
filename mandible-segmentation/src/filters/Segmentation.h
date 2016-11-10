@@ -50,6 +50,7 @@ private:
     int* dimentions_;
     int* extent_;
     int currentId_;
+    int count_;
 };
 
 

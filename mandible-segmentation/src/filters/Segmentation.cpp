@@ -5,6 +5,7 @@ Segmentation::Segmentation(vtkSmartPointer<vtkImageData> input):inputData_(input
     dimentions_ = inputData_->GetDimensions();
     extent_ = inputData_->GetExtent();
     currentId_ = 0;
+    count_ = 0;
     outputData_ = vtkSmartPointer<vtkImageData>::New();
     segmentsList_ = new QList<Segment>;
     initializeLabelMap_();
@@ -31,26 +32,29 @@ void Segmentation::createOutputData_()
 
 void Segmentation::initializeLabelMap_()
 {
-    for(int k = extent_[4] + 1; k <= extent_[5]; k++)
+    for(int k = extent_[4] ; k <= extent_[5]; k++)
     {
-         for(int i = extent_[0] + 1; i < extent_[1]; i++)
+        for(int j = extent_[2] ; j <= extent_[3]; j++)
         {
-            for(int j = extent_[2] + 1; j < extent_[3]; j++)
+            for(int i = extent_[0] ; i <= extent_[1]; i++)
             {
-                int ijk[3] = {i, j,k};
-                pointsLabels_[inputData_->ComputePointId(ijk)] = -1;
+                double data = inputData_->GetScalarComponentAsDouble(i, j, k, 0);
+                if(data > 0)
+                {
+                    int ijk[3] = {i, j,k};
+                    pointsLabels_[inputData_->ComputePointId(ijk)] = -1;
+                }
             }
         }
     }
 }
-
 void Segmentation::startLabeling_()
 {
-    for(int i = extent_[0] + 1; i < extent_[1]; i++)
+    for(int k = extent_[4] + 1; k <= extent_[5]; k++)
     {
         for(int j = extent_[2] + 1; j < extent_[3]; j++)
         {
-            for(int k = extent_[4] + 1; k < extent_[5]; k++)
+            for(int i = extent_[0] + 1; i < extent_[1]; i++)
             {
                 double data = inputData_->GetScalarComponentAsDouble(i, j, k, 0);
                 if(data > 0)
@@ -95,10 +99,22 @@ QList<vtkIdType> Segmentation::getNeighbours_(int i, int j, int k)
         {
             ijk[0] = i + x;
             ijk[1] = j + y;
-            ijk[2] = k ;
-            neighbours.push_back(inputData_->ComputePointId(ijk));
+            if((x == -1 && y == 0) ||
+                    (y == -1 && x == 0) ||
+                    (x == -1 && y == -1) ||
+                    (x == -1 && y == 1))
+            {
+                ijk[2] = k;
+                double data = inputData_->GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0);
+                if(data > 0)
+                    neighbours.push_back(inputData_->ComputePointId(ijk));
+            }
+            ijk[0] = i + x;
+            ijk[1] = j + y;
             ijk[2] = k - 1;
-            neighbours.push_back(inputData_->ComputePointId(ijk));
+            double data = inputData_->GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0);
+            if(data > 0)
+                neighbours.push_back(inputData_->ComputePointId(ijk));
         }
     }
     return neighbours;
@@ -117,9 +133,18 @@ int Segmentation::createSegment()
 
 int Segmentation::updateSegmentsList(QSet<int> segmentsIds)
 {
+    int minId = *segmentsIds.begin();
+    for(int i : segmentsIds)
+    {
+        if( i < minId)
+        {
+            minId = i;
+        }
+    }
+
     for(auto seg = segmentsList_->begin(); seg != segmentsList_->end(); ++seg)
     {
-        if(seg->id_ == *segmentsIds.begin())
+        if(seg->id_ == minId)
         {
             seg->pointsCount_++;
             for(int it : segmentsIds)
@@ -131,22 +156,30 @@ int Segmentation::updateSegmentsList(QSet<int> segmentsIds)
         }
     }
 
-    return *segmentsIds.begin();
+    return minId;
 }
 
 Segment Segmentation::getLargestSegment_()
 {
-    double maxCount = segmentsList_->at(0).pointsCount_;
-    int largestSegmentId = 0;
-    for(auto it = segmentsList_->begin(); it != segmentsList_->end(); ++it)
+    int listSize = segmentsList_->size();
+    double maxCount = segmentsList_->at(listSize - 1).pointsCount_;
+    int largestSegmentId = listSize - 1;
+    for(auto it = segmentsList_->end() - 1; it != segmentsList_->begin(); --it)
     {
         it->totalCount_ = it->pointsCount_;
         for(int it2 : it->connectedSegmentsIds_)
         {
             it->totalCount_ += segmentsList_->at(it2).pointsCount_;
+            for(auto it3 : segmentsList_->at(it2).connectedSegmentsIds_)
+            {
+                it->totalCount_ += segmentsList_->at(it3).pointsCount_;
+            }
         }
-        if(it->totalCount_ > maxCount)
+        double countVal = it->totalCount_;
+        //        if(it->totalCount_ > maxCount)
+        if(countVal > maxCount)
         {
+            //            maxCount = it->totalCount_;
             maxCount = it->totalCount_;
             largestSegmentId = it->id_;
         }
@@ -157,20 +190,28 @@ Segment Segmentation::getLargestSegment_()
 
 void Segmentation::setOutputData(Segment largestSeg)
 {
-
-//#pragma omp parallel for
-    for(int i = extent_[0] + 1; i < extent_[1]; i++)
+    for(int i = extent_[0] ; i <= extent_[1]; i++)
     {
-        for(int j = extent_[2] + 1; j < extent_[3]; j++)
+        for(int j = extent_[2] ; j <= extent_[3]; j++)
         {
-            for(int k = extent_[4] + 1; k <= extent_[5]; k++)
+            for(int k = extent_[4] ; k <= extent_[5]; k++)
             {
                 int ijk[3] = {i, j,k};
                 int segId = pointsLabels_[inputData_->ComputePointId(ijk)];
                 double data = inputData_->GetScalarComponentAsDouble(i, j, k, 0);
-                if(largestSeg.connectedSegmentsIds_.contains(segId) || segId == largestSeg.id_ )
+                bool found = false;
+                for(auto it : largestSeg.connectedSegmentsIds_)
+                {
+                    if(segmentsList_->at(it).connectedSegmentsIds_.contains(segId))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if(largestSeg.connectedSegmentsIds_.contains(segId) || segId == largestSeg.id_ || found)
                 {
                     outputData_->SetScalarComponentFromDouble(i, j, k, 0, data);
+                    count_++;
                 }
                 else
                 {
