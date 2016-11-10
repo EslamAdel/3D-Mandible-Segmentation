@@ -30,7 +30,7 @@ int main(int argc , char ** argv)
 
     Segmentation* mandibleSegmentation = new Segmentation(thresholdFilter->getThresholdedData());
 //    volRenderer->rayCastingRendering(mandibleSegmentation->getSegmentedData());
-            volRenderer->extractSurfaces(1300, mandibleSegmentation->getSegmentedData());
+    volRenderer->extractSurfaces(1300, mandibleSegmentation->getSegmentedData());
     return EXIT_SUCCESS;
 
 }
