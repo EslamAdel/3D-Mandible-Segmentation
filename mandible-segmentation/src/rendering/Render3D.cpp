@@ -69,8 +69,8 @@ void Render3D::extractSurfaces(double isoValue, vtkImageData* data)
     if(!isDataRescaled)
         LOG_ERROR("Rescale Data at First");
     isoExtractor_ = vtkSmartPointer<vtkContourFilter>::New();
-    isoExtractor_->SetInputConnection(shifter_->GetOutputPort());
-     isoExtractor_->SetInputData(data);
+//    isoExtractor_->SetInputConnection(shifter_->GetOutputPort());
+    isoExtractor_->SetInputData(data);
     isoExtractor_->SetValue(0, isoValue);
 
     vtkSmartPointer<vtkPolyDataNormals> dataNormals =
