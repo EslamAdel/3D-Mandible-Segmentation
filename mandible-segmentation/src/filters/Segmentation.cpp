@@ -158,7 +158,7 @@ Segment Segmentation::getLargestSegment_()
 void Segmentation::setOutputData(Segment largestSeg)
 {
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for(int i = extent_[0] + 1; i < extent_[1]; i++)
     {
         for(int j = extent_[2] + 1; j < extent_[3]; j++)
@@ -168,7 +168,7 @@ void Segmentation::setOutputData(Segment largestSeg)
                 int ijk[3] = {i, j,k};
                 int segId = pointsLabels_[inputData_->ComputePointId(ijk)];
                 double data = inputData_->GetScalarComponentAsDouble(i, j, k, 0);
-                if(largestSeg.connectedSegmentsIds_.contains(segId))
+                if(largestSeg.connectedSegmentsIds_.contains(segId) || segId == largestSeg.id_ )
                 {
                     outputData_->SetScalarComponentFromDouble(i, j, k, 0, data);
                 }

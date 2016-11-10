@@ -20,15 +20,15 @@ int main(int argc , char ** argv)
 
     vtkImageData* myTestVolume = generateTestVolume(80, 80, 80);
 
-    //    ExtractVOI* extractor = new ExtractVOI;
+        ExtractVOI* extractor = new ExtractVOI;
 
-    //    extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
-    //    extractor->setRange(75, 450, 150, 420, 392, 525);
+        extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
+        extractor->setRange(75, 450, 150, 420, 392, 525);
 
 
-    //    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1200);
+        Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1200);
 
-        Segmentation* mandibleSegmentation = new Segmentation(myTestVolume);
+        Segmentation* mandibleSegmentation = new Segmentation(thresholdFilter->getThresholdedData());
     volRenderer->rayCastingRendering(mandibleSegmentation->getSegmentedData());
 //        volRenderer->extractSurfaces(1200, myTestVolume);
     return EXIT_SUCCESS;
