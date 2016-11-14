@@ -32,7 +32,7 @@ int main(int argc , char ** argv)
 
     ExtractVOI* extractor = new ExtractVOI;
     extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
-    extractor->setRange(75, 450, 150, 420, 380, 525);
+    extractor->setRange(75, 450, 150, 420, 150, 232);
 
 
     gettimeofday(&start, NULL);

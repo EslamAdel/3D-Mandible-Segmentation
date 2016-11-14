@@ -12,7 +12,6 @@ Segmentation::Segmentation(vtkSmartPointer<vtkImageData> input):inputData_(input
 
     //Initialization
     currentId_ = 0;
-    count_ = 0;
     outputData_ = vtkSmartPointer<vtkImageData>::New();
     segmentsList_ = new QList<Segment>;
     initializeLabelMap_();
@@ -42,6 +41,7 @@ void Segmentation::createOutputData_()
 void Segmentation::initializeLabelMap_()
 {
     LOG_DEBUG("Initialize the points -> segment map");
+#pragma omp parallel for
     for(int k = extent_[4] ; k <= extent_[5]; k++)
     {
         for(int j = extent_[2] ; j <= extent_[3]; j++)
@@ -198,6 +198,8 @@ Segment Segmentation::getLargestSegment_()
 void Segmentation::setOutputData(Segment largestSeg)
 {
     LOG_DEBUG("Writing The Output Data");
+    QSet<int> segments = BFS(largestSeg);
+#pragma omp parallel for shared(segments)
     for(int k = extent_[4] ; k <= extent_[5]; k++)
     {
         for(int j = extent_[2] ; j <= extent_[3]; j++)
@@ -205,34 +207,46 @@ void Segmentation::setOutputData(Segment largestSeg)
             for(int i = extent_[0] ; i <= extent_[1]; i++)
             {
                 int ijk[3] = {i, j,k};
-                int segId = pointsLabels_[inputData_->ComputePointId(ijk)];
-                bool found = false;
-                for(auto it : largestSeg.connectedSegmentsIds_)
-                {
-                    if(segmentsList_->at(it).connectedSegmentsIds_.contains(segId))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if(largestSeg.connectedSegmentsIds_.contains(segId) || segId == largestSeg.id_ || found)
+                if(segments.contains(pointsLabels_[inputData_->ComputePointId(ijk)]))
                 {
                     outputData_->SetScalarComponentFromDouble(i,
                                                               j,
                                                               k,
                                                               0,
                                                               inputData_->GetScalarComponentAsDouble(i, j, k, 0));
-                    count_++;
-                }
-                else
-                {
-                    outputData_->SetScalarComponentFromDouble(i,
-                                                              j,
-                                                              k,
-                                                              0,
-                                                              0);
                 }
             }
         }
     }
 }
+
+QSet<int> Segmentation::BFS(Segment largestSegment)
+{
+    LOG_DEBUG("Starting BFS");
+    //Segments Set
+    QSet<int> segments;
+
+    // Create a queue for BFS
+    QList<int> queue;
+
+    queue.push_back(largestSegment.id_);
+
+    while(!queue.empty())
+    {
+        // Dequeue a vertex from queue and print it
+        int s = queue.front();
+        segments.insert(s);
+        queue.pop_front();
+
+        // Get all adjacent vertices of the dequeued vertex s
+        // If a adjacent has not been visited, then mark it visited
+        // and enqueue it
+        for(auto i : segmentsList_->at(s).connectedSegmentsIds_)
+        {
+            queue.push_back(i);
+            segments.insert(i);
+        }
+    }
+    return segments;
+}
+

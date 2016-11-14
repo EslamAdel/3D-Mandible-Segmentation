@@ -146,6 +146,17 @@ private:
      */
     void setOutputData(Segment largestSeg);
 
+    /**
+     * @brief BFS
+     * Breadth First Search Algorithm used for
+     * Traversal  of the connected segments Tree.
+     * @param largestSegment
+     * @return
+     * A Set containing ids of all connected segments to
+     * The Largest Segment.
+     */
+    QSet<int> BFS(Segment largestSegment);
+
 private:
 
     /**
@@ -189,13 +200,6 @@ private:
      * Stores the id of the next segment
      */
     int currentId_;
-
-    /**
-     * @brief count_
-     * Stores the count of points
-     * that actutally have maped to output volume.
-     */
-    int count_;
 };
 
 
