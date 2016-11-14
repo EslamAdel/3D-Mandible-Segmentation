@@ -41,7 +41,6 @@ void Segmentation::createOutputData_()
 void Segmentation::initializeLabelMap_()
 {
     LOG_DEBUG("Initialize the points -> segment map");
-#pragma omp parallel for
     for(int k = extent_[4] ; k <= extent_[5]; k++)
     {
         for(int j = extent_[2] ; j <= extent_[3]; j++)
@@ -197,8 +196,8 @@ Segment Segmentation::getLargestSegment_()
 
 void Segmentation::setOutputData(Segment largestSeg)
 {
-    LOG_DEBUG("Writing The Output Data");
     QSet<int> segments = BFS(largestSeg);
+    LOG_DEBUG("Writing The Output Data");
 #pragma omp parallel for shared(segments)
     for(int k = extent_[4] ; k <= extent_[5]; k++)
     {
@@ -225,11 +224,13 @@ QSet<int> Segmentation::BFS(Segment largestSegment)
     LOG_DEBUG("Starting BFS");
     //Segments Set
     QSet<int> segments;
+    QList<int> visited;
 
     // Create a queue for BFS
     QList<int> queue;
 
     queue.push_back(largestSegment.id_);
+    visited.push_back(largestSegment.id_);
 
     while(!queue.empty())
     {
@@ -243,8 +244,12 @@ QSet<int> Segmentation::BFS(Segment largestSegment)
         // and enqueue it
         for(auto i : segmentsList_->at(s).connectedSegmentsIds_)
         {
+            if(!visited.contains(i))
+            {
             queue.push_back(i);
+            visited.push_back(i);
             segments.insert(i);
+            }
         }
     }
     return segments;
