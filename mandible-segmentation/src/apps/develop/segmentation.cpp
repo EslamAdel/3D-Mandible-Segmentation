@@ -28,15 +28,15 @@ int main(int argc , char ** argv)
                              volRenderer->getShift());
 
 
-    vtkImageData* myTestVolume = generateTestVolume(80, 80, 80);
+//    vtkImageData* myTestVolume = generateTestVolume(80, 80, 80);
 
     ExtractVOI* extractor = new ExtractVOI;
     extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
-    extractor->setRange(75, 450, 150, 420, 150, 232);
+    extractor->setRange(75, 450, 150, 420, 380, 525);
 
 
     gettimeofday(&start, NULL);
-    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1200);
+    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1400);
     gettimeofday(&end, NULL);
     ThresholdingTime = (end.tv_sec - start.tv_sec) +
             (end.tv_usec - start.tv_usec)/1000000;
@@ -55,7 +55,7 @@ int main(int argc , char ** argv)
     printf("Segmentation Time : %d min : %f sec \n", (int) segmentationTime /60,
            segmentationTime - 60*((int) segmentationTime /60));
 //    volRenderer->rayCastingRendering(mandibleSegmentation->getSegmentedData());
-    volRenderer->extractSurfaces(1300, mandibleSegmentation->getSegmentedData());
+    volRenderer->extractSurfaces(1500, mandibleSegmentation->getSegmentedData());
     gettimeofday(&end, NULL);
 
     return EXIT_SUCCESS;
