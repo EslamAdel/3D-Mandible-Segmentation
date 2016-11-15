@@ -19,10 +19,10 @@ int main(int argc , char ** argv)
     ExtractVOI* extractor = new ExtractVOI;
 
     extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
-    extractor->setRange(75, 450, 150, 420, 380, 525);
+    extractor->setRange(75, 450, 150, 420, 350, 525);
 
 
-    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1300);
+    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1400);
 
 //    volRenderer->rayCastingRendering(extractor->getOutputData());
     volRenderer->rayCastingRendering(thresholdFilter->getThresholdedData());
