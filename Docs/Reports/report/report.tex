@@ -15,7 +15,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-\graphicspath{{images/}}
+\graphicspath{{images/report3/}}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -45,7 +45,7 @@
 
 % TITLE 
 \title{\rmfamily\normalfont\spacedallcaps{
-Report \#{2}
+Report \#{3}
 }}
 
 % PROJECT NAME -> ADD YOUR PROJECT NAME HERE
@@ -73,13 +73,13 @@ Report \#{2}
 \begin{center}
 \begin{tabular}{ l | c }
 \hline 
-Report ID & 2  \\ % Change the sprint ID here 
+Report ID & 3  \\ % Change the sprint ID here 
 \hline 
-Report Duration & 1 Week \\ % Change the duration here 
+Report Duration & 2 Week \\ % Change the duration here 
 \hline 
-Beginning & 24.10.2016 \\ % Change the start data here
+Beginning & 31.10.2016 \\ % Change the start data here
 \hline 
-End & 31.10.2016 \\ % Change the end data here
+End & 15.11.2016 \\ % Change the end data here
 \hline 
 \end{tabular}
 \end{center}
@@ -87,114 +87,130 @@ End & 31.10.2016 \\ % Change the end data here
 %\section{Objectives}
 \section{Original Objectives}
 \begin{enumerate}
-\item Extracting axial, coronal, and sagittal projections.
-\item Extracting a Volume of Interest (VOI).
-\item Ray Casting Renderer.
-\item Structuring the Project to be modular and extensible.
-\item Implementing Thresholding Filter.
-\item filtering the Data.
-\item implementing mandible segmentation Algorithm.
-\item GUI Designe
+\item Thresholding Implementation.
+\item Implementing mandible Segmentation Algorithm.
+\item Filtering the Data.
+\item GUI Design.
 \end{enumerate}
 
 \section{Accomplished Objectives}
-\subsection{Extracting axial, coronal, and sagittal projections}
-\textit{vtkImageViewer2} or \textit{vtkResliceImageViewer} objects enables us to reslice the volume on any projections (axial, coronal, and sagittal). using the method \textit{SetSliceOrientation()} of \textit{vtkResliceImageViewer} class we can select the projection to be viewed.
-Figure \ref{fig:projections} shows the different projections.
+\subsection{Thresholding Implementation}
+figure \ref{fig:Thresholding} shows the result of applying thresholding on the volume of interest with different values of threshold, It is clear that at 1100 the skin still appears, for 1200 it is better but still some of soft tissues appears, at 1400 almost all soft tissues are suppressed and only bone appears. Applying Thresholding is done in parallel using OpenMP compiler directives, as the domain or data decomposition is valid at this stage. The running time for thresholding is at most 2 seconds.
+
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.33\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{axial}
-        \caption{Axial Projection.}
+        \includegraphics[width=\textwidth]{T1100}
+        \caption{Threshold is 1100.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.33\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{cronal}
-        \caption{Coronal Projection}
+        \includegraphics[width=\textwidth]{T1200}
+        \caption{Threshold is 1200}
     \end{subfigure}
       \hfill
     \begin{subfigure}[b]{0.33\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{sagittal}
-        \caption{Sagittal Projection}
+        \includegraphics[width=\textwidth]{T1400}
+        \caption{Threshold is 1400}
     \end{subfigure}
-    \caption{Extracting axial, coronal, and sagittal projection using \textit{vtkResliceImageViewer} class}
-    \label{fig:projections}
+    \caption{Applying Thresholding for different thresholds}
+    \label{fig:Thresholding}
 \end{figure}
 
+\subsection{Implementing Mandible Segmentation Algorithm}
+For mandible segmentation Thresholding algorithm using labeling and connectivity is applied, The connectivity of data point is checked with its 13th neighbourhood, 9 at the previous slice and 4 at the same slice, if the point is connected to a labled point so it will have the same label, and if it is not have any labeled data point in its neighbours, it will be a new segment with a new label. mapping id of  each none zero data point to its label is maintained using a \textit{std::unordered\_map} that implements hash table based map with more time efficiency in restoring data from its key. on the other hand a segments list is constructed to maintain the count of points connected to each segment and a set of segments equivalent to this segment.
 
-\subsection{Extracting a Volume of Interest (VOI)}
-On of the most important tasks to do before running segmentation algorithm is to select a specific region or a Volume of interest that containing the mandible. Vtk provides a simple and effective sub-volume extraction filter that is \textit{vtkExtractVOI}, \textit{SetVOI()} methods enables us to select the starting and ending coordinates of our new volume. figure \ref{fig:VOI} shows the result of extracting Volume of interest using different rendering algorithms as figure \ref{fig:VOI-CM} using Marching Cube rendering, and figure \ref{fig:VOI-RC} using Ray Casting rendering.
-\begin{figure}
-    \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{VOI-RC}
-        \caption{Rendering of VOI using Ray Casting}
-        \label{fig:VOI-CM}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{VOI-CM}
-        \caption{Rendering of VOI using Marching Cube}
-        \label{fig:VOI-RC}
-    \end{subfigure}
-    \caption{Extracting Volume of Interest}
-    \label{fig:VOI}
-\end{figure}
+After labeling all none zero data points, we have to get the largest segment. by adding the count of points of each connected segments to each segment, then we get the total points of each segment and then we select the largest one. The more challenging task is to acquire all connected segments of the largest segment from its connected segments Set, it is solved efficiently using Breadth First Search Algorithm to traverse all nodes of connected segments tree. 
 
-\subsection{Ray Casting Renderer}
-Ray Casting Rendering is on of the most important rendering techniques and it enables us to visualize the different tissues at the same time and using the transfer function we can set a different colors to the different tissues. VTK provides some classes to do ray casting volume rendering like : \textit{vtkVolumeRayCastCompositeFunction}, \textit{vtkVolumeRayCastMapper} and \textit{vtkColorTransferFunction} to set the transfer function parameters( color and opacity). Figure \ref{fig:RC-CM} shows the rendering of Volume using ray casting and figure \ref{fig:3D-CM} marching cubes. 
-It is noticeable that there is a surrounding box over the volume ad the data is noisy.
+Figure \ref{fig:BS} shows different views of the volume after extracting volume of interest and applying thresholding and before applying segmentation algorithm, figure \ref{fig:RC}, \ref{fig:MC} show the results of segmentation, figure \ref{fig:RC} shows the  mandible rendered using ray casting and figure \ref{fig:MC} using marching cubes. The running time of segmentation algorithm has been enhanced after applying Breadth First Algorithm, as it was about  3 minutes and now it is only 30 seconds of 512 x 512 x 525 volume. 
 
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.33\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{3D-RC}
-        \caption{Rendering using Ray Casting}
-        \label{fig:3D-CM}
+        \includegraphics[width=\textwidth]{BSS}
+        \caption{Side View of Volume}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.33\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{3D-CM}
-        \caption{Rendering using Marching Cube}
-        \label{fig:3D-RC}
+        \includegraphics[width=\textwidth]{BSF}
+        \caption{Front View of Volume}
     \end{subfigure}
-    \caption{Marching Cubes vs Ray Casting}
-    \label{fig:RC-CM}
+      \hfill
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{BST}
+        \caption{Top View of Volume}
+    \end{subfigure}
+    \caption{Volume of Interest Before Segmentation with different Views}
+    \label{fig:BS}
 \end{figure}
 
-\subsection{Structuring the Project to be modular and extensible.}
-I have succesfully structured the project to be more extensible and scalable and to be more modular, this is important to make every module isolated and independent and ease the process of debugging and testing the code after completion, There is alot of work to do. but I think the new project structure will be a good starting step to our project design.
 
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{RCS}
+        \caption{Side View of Volume}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{RCF}
+        \caption{Front View of Volume}
+    \end{subfigure}
+      \hfill
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{RCT}
+        \caption{Top View of Volume}
+    \end{subfigure}
+    \caption{Rendering of Volume After Segmentation with different Views using  Ray Casting rendering technique.}
+    \label{fig:RC}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{MCS}
+        \caption{Side View of Volume}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{MCF}
+        \caption{Front View of Volume}
+    \end{subfigure}
+      \hfill
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{MCT}
+        \caption{Top View of Volume}
+    \end{subfigure}
+    \caption{Rendering of Volume After Segmentation with different Views using  Marching Cubes rendering technique.}
+    \label{fig:MC}
+\end{figure}
 
 \section{Missed Objectives}
+
 \begin{itemize}
-\item Thresholding 
-\item filtering
-\item Segmentation implementation
+\item Filtering the Data.
 \item GUI Designe
 \end{itemize}
 
- 
-%\section{Next Step}
-%Summarize the main points that will be taken into consideration in the next sprint
-
-%\section{Next Sprint Objectives}
-%\begin{enumerate}
-%\item Objective 1
-%\item Objective 2
-%\item Objective 2
-%\end{enumerate}
-
-
-    
-   
+\section{Next Step}
+\begin{itemize}
+\item Filtering data to remove noise.
+\item Graphical user interface design.
+\item Enhance framework and more code optimization.
+\item Writing a short paper.
+\end{itemize}   
     
 %******************************************************************************
 % DOCUMENT ENDS HERE 
