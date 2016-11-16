@@ -32,7 +32,7 @@ int main(int argc , char ** argv)
 
     ExtractVOI* extractor = new ExtractVOI;
     extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
-    extractor->setRange(75, 450, 150, 420, 350, 525);
+    extractor->setRange(75, 450, 145, 420, 270, 525);
 
 
     gettimeofday(&start, NULL);
@@ -54,8 +54,8 @@ int main(int argc , char ** argv)
            ThresholdingTime - 60*((int) ThresholdingTime /60));
     printf("Segmentation Time : %d min : %f sec \n", (int) segmentationTime /60,
            segmentationTime - 60*((int) segmentationTime /60));
-//    volRenderer->rayCastingRendering(mandibleSegmentation->getSegmentedData());
-    volRenderer->extractSurfaces(1500, mandibleSegmentation->getSegmentedData());
+    volRenderer->rayCastingRendering(mandibleSegmentation->getSegmentedData());
+    //volRenderer->extractSurfaces(1500, mandibleSegmentation->getSegmentedData());
     gettimeofday(&end, NULL);
 
     return EXIT_SUCCESS;
