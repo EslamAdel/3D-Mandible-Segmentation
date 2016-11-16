@@ -75,7 +75,7 @@ Report \#{3}
 \hline 
 Report ID & 3  \\ % Change the sprint ID here 
 \hline 
-Report Duration & 2 Week \\ % Change the duration here 
+Report Duration & 2 Weeks \\ % Change the duration here 
 \hline 
 Beginning & 31.10.2016 \\ % Change the start data here
 \hline 
@@ -121,7 +121,7 @@ figure \ref{fig:Thresholding} shows the result of applying thresholding on the v
 \end{figure}
 
 \subsection{Implementing Mandible Segmentation Algorithm}
-For mandible segmentation Thresholding algorithm using labeling and connectivity is applied, The connectivity of data point is checked with its 13th neighbourhood, 9 at the previous slice and 4 at the same slice, if the point is connected to a labled point so it will have the same label, and if it is not have any labeled data point in its neighbours, it will be a new segment with a new label. mapping id of  each none zero data point to its label is maintained using a \textit{std::unordered\_map} that implements hash table based map with more time efficiency in restoring data from its key. on the other hand a segments list is constructed to maintain the count of points connected to each segment and a set of segments equivalent to this segment.
+For mandible segmentation algorithm, The connectivity of each data point is checked with its 13th neighbourhood, 9 at the previous slice and 4 at the same slice, if the point is connected to a labled point so it will have the same label, and if it is not have any labeled data point in its neighbours, it will be a new segment with a new label. mapping id of  each none zero data point to its label is maintained using a \textit{std::unordered\_map} that implements hash table based map with more time efficiency in restoring data from its key. on the other hand a segments list is constructed to maintain the count of points connected to each segment and a set of segments equivalent to this segment.
 
 After labeling all none zero data points, we have to get the largest segment. by adding the count of points of each connected segments to each segment, then we get the total points of each segment and then we select the largest one. The more challenging task is to acquire all connected segments of the largest segment from its connected segments Set, it is solved efficiently using Breadth First Search Algorithm to traverse all nodes of connected segments tree. 
 
