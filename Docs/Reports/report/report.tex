@@ -1,7 +1,7 @@
 %******************************************************************************
 % KOMA-Script article scrartcl
 %******************************************************************************
-\documentclass[10pt, b5paper]{article} 
+\documentclass[11.5pt, b5paper]{article} 
 
 % Add here all the packages that will be used in the document
 \include{packages}
@@ -15,7 +15,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-\graphicspath{{images/report3/}}
+\graphicspath{{images/report4/}}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -45,7 +45,7 @@
 
 % TITLE 
 \title{\rmfamily\normalfont\spacedallcaps{
-Report \#{3}
+Report \#{4}
 }}
 
 % PROJECT NAME -> ADD YOUR PROJECT NAME HERE
@@ -73,13 +73,13 @@ Report \#{3}
 \begin{center}
 \begin{tabular}{ l | c }
 \hline 
-Report ID & 3  \\ % Change the sprint ID here 
+Report ID & 4   \\ % Change the sprint ID here 
 \hline 
-Report Duration & 2 Weeks \\ % Change the duration here 
+Report Duration & 1 Week \\ % Change the duration here 
 \hline 
-Beginning & 31.10.2016 \\ % Change the start data here
+Beginning & 15.11.2016 \\ % Change the start data here
 \hline 
-End & 15.11.2016 \\ % Change the end data here
+End & 22.11.2016 \\ % Change the end data here
 \hline 
 \end{tabular}
 \end{center}
@@ -87,45 +87,13 @@ End & 15.11.2016 \\ % Change the end data here
 %\section{Objectives}
 \section{Original Objectives}
 \begin{enumerate}
-\item Thresholding Implementation.
-\item Implementing mandible Segmentation Algorithm.
-\item Filtering the Data.
+\item Segmentation of Full mandible.
 \item GUI Design.
 \end{enumerate}
 
 \section{Accomplished Objectives}
-\subsection{Thresholding Implementation}
-figure \ref{fig:Thresholding} shows the result of applying thresholding on the volume of interest with different values of threshold, It is clear that at 1100 the skin still appears, for 1200 it is better but still some of soft tissues appears, at 1400 almost all soft tissues are suppressed and only bone appears. Applying Thresholding is done in parallel using OpenMP compiler directives, as the domain or data decomposition is valid at this stage. The running time for thresholding is at most 2 seconds.
-
-\begin{figure}
-    \centering
-    \begin{subfigure}[b]{0.33\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{T1100}
-        \caption{Threshold is 1100.}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{T1200}
-        \caption{Threshold is 1200}
-    \end{subfigure}
-      \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{T1400}
-        \caption{Threshold is 1400}
-    \end{subfigure}
-    \caption{Applying Thresholding for different thresholds}
-    \label{fig:Thresholding}
-\end{figure}
-
-\subsection{Implementing Mandible Segmentation Algorithm}
-For mandible segmentation algorithm, The connectivity of each data point is checked with its 13th neighbourhood, 9 at the previous slice and 4 at the same slice, if the point is connected to a labled point so it will have the same label, and if it is not have any labeled data point in its neighbours, it will be a new segment with a new label. mapping id of  each none zero data point to its label is maintained using a \textit{std::unordered\_map} that implements hash table based map with more time efficiency in restoring data from its key. on the other hand a segments list is constructed to maintain the count of points connected to each segment and a set of segments equivalent to this segment.
-
-After labeling all none zero data points, we have to get the largest segment. by adding the count of points of each connected segments to each segment, then we get the total points of each segment and then we select the largest one. The more challenging task is to acquire all connected segments of the largest segment from its connected segments Set, it is solved efficiently using Breadth First Search Algorithm to traverse all nodes of connected segments tree. 
-
-Figure \ref{fig:BS} shows different views of the volume after extracting volume of interest and applying thresholding and before applying segmentation algorithm, figure \ref{fig:RC}, \ref{fig:MC} show the results of segmentation, figure \ref{fig:RC} shows the  mandible rendered using ray casting and figure \ref{fig:MC} using marching cubes. The running time of segmentation algorithm has been enhanced after applying Breadth First Algorithm, as it was about  3 minutes and now it is only 30 seconds of 512 x 512 x 525 volume. 
+\subsection{Segmentation of Full mandible}
+The Segmentation results of the full mandible are shown in figure \ref{fig:RC}, and \ref{fig:MC}, The full mandible was segmented with the condyle part, Figure \ref{fig:BS} shows the volume of interest before applying segmentation Algorithm. these results were obtained from case 5 which is not noisy and there is no metal artifacts, on the other hand when I used case 13 that is very noisy and contains metal artifacts at the teeth of mandible, the result is shown in figure \ref{fig:NS}, the different projections (sagittal, coronal, and axial) of case 13 are shown in figure \ref{fig:NV}. Our approach works correctly and the full mandible was segmented as well, But these artifact must be removed, which is another study that we need further research.
 
 \begin{figure}
     \centering
@@ -197,21 +165,49 @@ Figure \ref{fig:BS} shows different views of the volume after extracting volume 
     \label{fig:MC}
 \end{figure}
 
-\section{Missed Objectives}
 
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{NSV}
+        \caption{Sagittal View}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{NFV}
+        \caption{Coronal View}
+    \end{subfigure}
+      \hfill
+    \begin{subfigure}[b]{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{NTV}
+        \caption{Axial View}
+    \end{subfigure}
+    \caption{The Different projections of case 13 that contains artifacts.}
+    \label{fig:NV}
+\end{figure}
+
+\begin{figure}
+\centering 
+\includegraphics[scale=0.5]{NS}
+\caption{The Result of segmentation of case 13 that contains artifacts}
+\label{fig:NS}
+\end{figure}
+
+\section{Missed Objectives}
 \begin{itemize}
-\item Filtering the Data.
-\item GUI Designe
+\item GUI Design
 \end{itemize}
 
 \section{Next Step}
 \begin{itemize}
-\item Filtering data to remove noise.
-\item Graphical user interface design.
-\item Enhance framework and more code optimization.
-\item Writing a short paper.
+\item Saving the mandible as STL Volume.
+\item Code enhancement and memory mangement.
+\item Design and implement a simple and effective GUI.
+\item Searching about artifacts removal.
 \end{itemize}   
-    
 %******************************************************************************
 % DOCUMENT ENDS HERE 
 %******************************************************************************
