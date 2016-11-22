@@ -252,6 +252,7 @@ QSet<int> Segmentation::BFS(Segment largestSegment)
             }
         }
     }
+    LOG_DEBUG("Number of Segments Connected to lartgest Segment = %d", segments.size());
     return segments;
 }
 
