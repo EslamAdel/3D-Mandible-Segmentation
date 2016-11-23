@@ -28,16 +28,14 @@ int main(int argc , char ** argv)
     Segmentation* teeth = new Segmentation(thresholdFilter->getThresholdedData());
 
     vtkSmartPointer<vtkImageResample> sampleUp = vtkSmartPointer<vtkImageResample>::New();
+    sampleUp->SetInterpolationModeToCubic();
     sampleUp->SetInputData(teeth->getSegmentedData());
-    sampleUp->SetAxisMagnificationFactor(0, 1.5);
-    sampleUp->SetAxisMagnificationFactor(1, 1.5);
-    sampleUp->SetAxisMagnificationFactor(2, 1.5);
+    sampleUp->SetAxisMagnificationFactor(0, 1.25);
+    sampleUp->SetAxisMagnificationFactor(1, 1.25);
+    sampleUp->SetAxisMagnificationFactor(2, 1.25);
     sampleUp->Update();
 
-
-//  volRenderer->rayCastingRendering(extractor->getOutputData());
-//    volRenderer->rayCastingRendering(thresholdFilter->getThresholdedData());
-//    volRenderer->extractSurfaces(2550, sampleUp->GetOutput());
+//    volRenderer->extractSurfaces(1000, sampleUp->GetOutput());
     volRenderer->rayCastingRendering(sampleUp->GetOutput());
     return EXIT_SUCCESS;
 

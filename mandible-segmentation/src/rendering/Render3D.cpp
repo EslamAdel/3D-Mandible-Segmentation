@@ -69,7 +69,6 @@ void Render3D::extractSurfaces(double isoValue, vtkImageData* data)
     if(!isDataRescaled)
         LOG_ERROR("Rescale Data at First");
     isoExtractor_ = vtkSmartPointer<vtkContourFilter>::New();
-//    isoExtractor_->SetInputConnection(shifter_->GetOutputPort());
     isoExtractor_->SetInputData(data);
     isoExtractor_->SetValue(0, isoValue);
 
@@ -119,26 +118,27 @@ void Render3D::rayCastingRendering(vtkImageData* data)
         LOG_ERROR("Rescale Data At First");
 
     LOG_DEBUG("Ray Casting Volume Rendering");
-    rayCasting_ = vtkSmartPointer<vtkVolumeRayCastCompositeFunction>::New();
+    vtkSmartPointer<vtkFixedPointVolumeRayCastMapper> mapper = vtkSmartPointer<
+            vtkFixedPointVolumeRayCastMapper>::New();
+    mapper->SetInputData(data);
 
-    vtkSmartPointer<vtkVolumeRayCastMapper> volumeMapper =
-            vtkSmartPointer<vtkVolumeRayCastMapper>::New();
-    volumeMapper->SetInputData(data);
-    volumeMapper->SetVolumeRayCastFunction(rayCasting_);
+    double* spacing = data->GetSpacing();
+    mapper->SetSampleDistance(spacing[0]/5);
 
     vtkSmartPointer<vtkColorTransferFunction>volumeColor =
             vtkSmartPointer<vtkColorTransferFunction>::New();
-    volumeColor->AddRGBPoint(0,    0.0, 0.0, 0.0);
-    volumeColor->AddRGBPoint(500,  1.0, 0.5, 0.3);
-    volumeColor->AddRGBPoint(1000, 1.0, 0.5, 0.3);
-    volumeColor->AddRGBPoint(1150, 1.0, 1.0, 0.9);
+    volumeColor->AddRGBPoint( -3024, 0, 0, 0, 0.5, 0.0);
+    volumeColor->AddRGBPoint( -16, 0.73, 0.25, 0.30, 0.49, .61);
+    volumeColor->AddRGBPoint( 641, .90, .82, .56, .5, 0.0);
+    volumeColor->AddRGBPoint( 3071, 1, 1, 1, .5, 0.0);
 
     vtkSmartPointer<vtkPiecewiseFunction> volumeScalarOpacity =
             vtkSmartPointer<vtkPiecewiseFunction>::New();
-    volumeScalarOpacity->AddPoint(0,    0.0);
-    volumeScalarOpacity->AddPoint(500,  0.25);
-    volumeScalarOpacity->AddPoint(1000, 0.5);
-    volumeScalarOpacity->AddPoint(1150, 0.85);
+    volumeScalarOpacity->AddPoint(-3024, 0, 0.5, 0.0);
+    volumeScalarOpacity->AddPoint(-16, 0, .49, .61);
+    volumeScalarOpacity->AddPoint(641, .72, .5, 0.0);
+    volumeScalarOpacity->AddPoint(3071, .71, 0.5, 0.0);
+    mapper->SetBlendModeToComposite();
 
     vtkSmartPointer<vtkPiecewiseFunction> volumeGradientOpacity =
             vtkSmartPointer<vtkPiecewiseFunction>::New();
@@ -148,18 +148,21 @@ void Render3D::rayCastingRendering(vtkImageData* data)
 
     vtkSmartPointer<vtkVolumeProperty> volumeProperty =
             vtkSmartPointer<vtkVolumeProperty>::New();
+    volumeProperty->SetInterpolationTypeToLinear();
     volumeProperty->SetColor(volumeColor);
     volumeProperty->SetScalarOpacity(volumeScalarOpacity);
     volumeProperty->SetGradientOpacity(volumeGradientOpacity);
     volumeProperty->SetInterpolationTypeToLinear();
     volumeProperty->ShadeOn();
-    volumeProperty->SetAmbient(0.4);
-    volumeProperty->SetDiffuse(0.6);
+    volumeProperty->SetAmbient(0.1);
+    volumeProperty->SetDiffuse(0.9);
     volumeProperty->SetSpecular(0.2);
+    volumeProperty->SetSpecularPower(10.0);
+    volumeProperty->SetScalarOpacityUnitDistance(0.8919);
 
     vtkSmartPointer<vtkVolume> volume =
             vtkSmartPointer<vtkVolume>::New();
-    volume->SetMapper(volumeMapper);
+    volume->SetMapper(mapper);
     volume->SetProperty(volumeProperty);
     renderer_->AddViewProp(volume);
 

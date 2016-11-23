@@ -20,6 +20,7 @@
 #include <vtkVolumeProperty.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkPiecewiseFunction.h>
+#include <vtkFixedPointVolumeRayCastMapper.h>
 
 #include "Logger.h"
 
@@ -147,10 +148,6 @@ private:
      */
     vtkSmartPointer<vtkMarchingCubes> marchCubes_;
 
-    /**
-     * @brief rayCasting_
-     */
-    vtkSmartPointer<vtkVolumeRayCastCompositeFunction> rayCasting_;
 
     /**
      * @brief camera_
