@@ -136,14 +136,14 @@ private:
      * @return
      * Segment with max points count.
      */
-    Segment getLargestSegment_();
+    QSet<int> getLargestSegment_();
 
     /**
      * @brief setOutputData
      * Set the points connected to largest segment to the  final image.
      * @param largestSeg
      */
-    void setOutputData(Segment largestSeg);
+    void setOutputData(QSet<int> segments);
 
     /**
      * @brief BFS
@@ -204,6 +204,11 @@ private:
      * Stores the id of the next segment
      */
     int currentId_;
+
+    /**
+     * @brief visitedSegments_
+     */
+    QSet<int > visitedSegments_;
 };
 
 

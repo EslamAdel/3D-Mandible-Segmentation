@@ -12,6 +12,8 @@ Segmentation::Segmentation(vtkSmartPointer<vtkImageData> input):inputData_(input
 
     //Initialization
     currentId_ = 0;
+    visitedSegments_.clear();
+    pointsLabels_.clear();
     outputData_ = vtkSmartPointer<vtkImageData>::New();
     segmentsList_ = new QList<Segment>;
     initializeLabelMap_();
@@ -70,8 +72,7 @@ void Segmentation::startLabeling_()
             }
         }
     }
-    Segment largestSegment =  getLargestSegment_();
-    setOutputData(largestSegment);
+    setOutputData(getLargestSegment_());
 
 }
 
@@ -165,13 +166,16 @@ int Segmentation::updateSegmentsList(QSet<int> segmentsIds)
     return minId;
 }
 
-Segment Segmentation::getLargestSegment_()
+QSet<int > Segmentation::getLargestSegment_()
 {
     LOG_DEBUG("Getting The Largest Segment");
     double maxCount = segmentsList_->at(0).pointsCount_;
-    int largestSegmentId = 0;
+    QSet<int> largeSegments = BFS(segmentsList_->at(0));
     for(auto it = segmentsList_->begin() ; it != segmentsList_->end(); ++it)
     {
+        if(visitedSegments_.contains(it->id_))
+            continue;
+
         it->totalCount_ = it->pointsCount_;
         QSet<int> segments = BFS(*it);
         for(auto it2 : segments)
@@ -181,16 +185,15 @@ Segment Segmentation::getLargestSegment_()
         if(it->totalCount_ > maxCount)
         {
             maxCount = it->totalCount_;
-            largestSegmentId = it->id_;
+            largeSegments = segments;
         }
     }
 
-    return segmentsList_->at(largestSegmentId);
+    return largeSegments;
 }
 
-void Segmentation::setOutputData(Segment largestSeg)
+void Segmentation::setOutputData(QSet<int> segments)
 {
-    QSet<int> segments = BFS(largestSeg);
     LOG_DEBUG("Writing The Output Data");
 #pragma omp parallel for shared(segments)
     for(int k = extent_[4]; k <= extent_[5]; k++)
@@ -201,24 +204,17 @@ void Segmentation::setOutputData(Segment largestSeg)
             {
                 int ijk[3] = {i, j,k};
                 if(inputData_->GetScalarComponentAsDouble(i, j, k, 0) > 0)
-		{
-                if(segments.contains(pointsLabels_[inputData_->ComputePointId(ijk)]))
                 {
-                    outputData_->SetScalarComponentFromDouble(i,
-                                                              j,
-                                                              k,
-                                                              0,
-                                                              inputData_->GetScalarComponentAsDouble(i, j, k, 0));
+                    if(segments.contains(pointsLabels_[inputData_->ComputePointId(ijk)]))
+                    {
+                        outputData_->SetScalarComponentFromDouble(i,
+                                                                  j,
+                                                                  k,
+                                                                  0,
+                                                                  inputData_->GetScalarComponentAsDouble(i, j, k, 0));
+                    }
                 }
-		else
-		{
-		 outputData_->SetScalarComponentFromDouble(i,
-                                                              j,
-                                                              k,
-                                                              0,
-                                                              0);
-		}
-		}
+
             }
         }
     }
@@ -227,7 +223,7 @@ void Segmentation::setOutputData(Segment largestSeg)
 
 QSet<int> Segmentation::BFS(Segment largestSegment)
 {
-//    LOG_DEBUG("Starting BFS");
+    LOG_DEBUG("Starting BFS");
     //Segments Set
     QSet<int> segments;
     QList<int> visited;
@@ -237,6 +233,7 @@ QSet<int> Segmentation::BFS(Segment largestSegment)
 
     queue.push_back(largestSegment.id_);
     visited.push_back(largestSegment.id_);
+    visitedSegments_.insert(largestSegment.id_);
 
     while(!queue.empty())
     {
@@ -254,11 +251,12 @@ QSet<int> Segmentation::BFS(Segment largestSegment)
             {
                 queue.push_back(i);
                 visited.push_back(i);
+                visitedSegments_.insert(i);
                 segments.insert(i);
             }
         }
     }
-//    LOG_DEBUG("Number of Segments Connected to %d Segment = %d", largestSegment.id_,segments.size());
+    LOG_DEBUG("Number of Segments Connected to %d Segment = %d", largestSegment.id_,segments.size());
     return segments;
 }
 
