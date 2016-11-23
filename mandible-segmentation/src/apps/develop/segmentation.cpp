@@ -18,8 +18,11 @@ int main(int argc , char ** argv)
 
     timeval start;
     timeval end;
-    double segmentationTime;
-    double ThresholdingTime;
+    double msegmentationTime;
+    double mThresholdingTime;
+
+    double tsegmentationTime;
+    double tThresholdingTime;
 
     Render3D* volRenderer = new Render3D;
 
@@ -31,31 +34,52 @@ int main(int argc , char ** argv)
 //    vtkImageData* myTestVolume = generateTestVolume(80, 80, 80);
 
     ExtractVOI* extractor = new ExtractVOI;
-    extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
+    extractor->setInputData(volRenderer->getShifter()->GetOutput());
     extractor->setRange(75, 450, 145, 420, 270, 525);
 
 
     gettimeofday(&start, NULL);
     Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1400);
     gettimeofday(&end, NULL);
-    ThresholdingTime = (end.tv_sec - start.tv_sec) +
+    mThresholdingTime = (end.tv_sec - start.tv_sec) +
             (end.tv_usec - start.tv_usec)/1000000;
 
     gettimeofday(&start, NULL);
     Segmentation* mandibleSegmentation = new Segmentation(thresholdFilter->getThresholdedData());
     gettimeofday(&end, NULL);
-    segmentationTime = (end.tv_sec - start.tv_sec) +
+    msegmentationTime = (end.tv_sec - start.tv_sec) +
+            (end.tv_usec - start.tv_usec)/1000000;
+
+    extractor->setInputData(mandibleSegmentation->getSegmentedData());
+    extractor->setRange(75, 450, 145, 420, 390, 525);
+
+    gettimeofday(&start, NULL);
+    Thresholding* teethThresholding = new Thresholding(mandibleSegmentation->getSegmentedData(), 2500);
+    gettimeofday(&end, NULL);
+    tThresholdingTime = (end.tv_sec - start.tv_sec) +
             (end.tv_usec - start.tv_usec)/1000000;
 
 
+
+    gettimeofday(&start, NULL);
+    Segmentation* teethSegmentation = new Segmentation(teethThresholding->getThresholdedData());
+    gettimeofday(&end, NULL);
+    tsegmentationTime = (end.tv_sec - start.tv_sec) +
+            (end.tv_usec - start.tv_usec)/1000000;
+
     printf("====================================================== \n");
     printf("Statistics \n");
-    printf("Thresholding Time : %d min : %f sec \n", (int) ThresholdingTime /60,
-           ThresholdingTime - 60*((int) ThresholdingTime /60));
-    printf("Segmentation Time : %d min : %f sec \n", (int) segmentationTime /60,
-           segmentationTime - 60*((int) segmentationTime /60));
-    volRenderer->rayCastingRendering(mandibleSegmentation->getSegmentedData());
-    //volRenderer->extractSurfaces(1500, mandibleSegmentation->getSegmentedData());
+    printf("Mandible Thresholding Time : %d min : %f sec \n", (int) mThresholdingTime /60,
+           mThresholdingTime - 60*((int) mThresholdingTime /60));
+    printf("Mandible Segmentation Time : %d min : %f sec \n", (int) msegmentationTime /60,
+           msegmentationTime - 60*((int) msegmentationTime /60));
+
+    printf("Teeth Thresholding Time : %d min : %f sec \n", (int) tThresholdingTime /60,
+           tThresholdingTime - 60*((int) tThresholdingTime /60));
+    printf("Teeth Segmentation Time : %d min : %f sec \n", (int) tsegmentationTime /60,
+           tsegmentationTime - 60*((int) tsegmentationTime /60));
+    //volRenderer->rayCastingRendering(teethSegmentation->getSegmentedData());
+    volRenderer->extractSurfaces(2500, teethSegmentation->getSegmentedData());
     gettimeofday(&end, NULL);
 
     return EXIT_SUCCESS;

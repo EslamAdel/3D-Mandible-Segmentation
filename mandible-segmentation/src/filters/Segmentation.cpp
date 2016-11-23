@@ -150,20 +150,17 @@ int Segmentation::updateSegmentsList(QSet<int> segmentsIds)
             minId = i;
         }
     }
-
-    for(auto seg = segmentsList_->begin(); seg != segmentsList_->end(); ++seg)
+    for(int it : segmentsIds)
     {
-        if(seg->id_ == minId)
+        if(it == minId)
+            segmentsList_->at(it).pointsCount_++;
+        for(int it2 : segmentsIds)
         {
-            seg->pointsCount_++;
-            for(int it : segmentsIds)
-            {
-                if(it != seg->id_ && !seg->connectedSegmentsIds_.contains(it))
-                    seg->connectedSegmentsIds_.insert(it);
-            }
-            break;
+            if(it2 != it )
+                segmentsList_->at(it).connectedSegmentsIds_.insert(it2);
         }
     }
+
 
     return minId;
 }
@@ -171,18 +168,15 @@ int Segmentation::updateSegmentsList(QSet<int> segmentsIds)
 Segment Segmentation::getLargestSegment_()
 {
     LOG_DEBUG("Getting The Largest Segment");
-    double maxCount = segmentsList_->at(segmentsList_->size() - 1).pointsCount_;
-    int largestSegmentId = segmentsList_->size() - 1;
-    for(auto it = segmentsList_->end() - 1; it != segmentsList_->begin(); --it)
+    double maxCount = segmentsList_->at(0).pointsCount_;
+    int largestSegmentId = 0;
+    for(auto it = segmentsList_->begin() ; it != segmentsList_->end(); ++it)
     {
         it->totalCount_ = it->pointsCount_;
-        for(int it2 : it->connectedSegmentsIds_)
+        QSet<int> segments = BFS(*it);
+        for(auto it2 : segments)
         {
             it->totalCount_ += segmentsList_->at(it2).pointsCount_;
-            for(auto it3 : segmentsList_->at(it2).connectedSegmentsIds_)
-            {
-                it->totalCount_ += segmentsList_->at(it3).pointsCount_;
-            }
         }
         if(it->totalCount_ > maxCount)
         {
@@ -199,13 +193,15 @@ void Segmentation::setOutputData(Segment largestSeg)
     QSet<int> segments = BFS(largestSeg);
     LOG_DEBUG("Writing The Output Data");
 #pragma omp parallel for shared(segments)
-    for(int k = extent_[4] ; k <= extent_[5]; k++)
+    for(int k = extent_[4]; k <= extent_[5]; k++)
     {
-        for(int j = extent_[2] ; j <= extent_[3]; j++)
+        for(int j = extent_[2]; j <= extent_[3]; j++)
         {
-            for(int i = extent_[0] ; i <= extent_[1]; i++)
+            for(int i = extent_[0]; i <= extent_[1]; i++)
             {
                 int ijk[3] = {i, j,k};
+                if(inputData_->GetScalarComponentAsDouble(i, j, k, 0) > 0)
+		{
                 if(segments.contains(pointsLabels_[inputData_->ComputePointId(ijk)]))
                 {
                     outputData_->SetScalarComponentFromDouble(i,
@@ -214,14 +210,24 @@ void Segmentation::setOutputData(Segment largestSeg)
                                                               0,
                                                               inputData_->GetScalarComponentAsDouble(i, j, k, 0));
                 }
+		else
+		{
+		 outputData_->SetScalarComponentFromDouble(i,
+                                                              j,
+                                                              k,
+                                                              0,
+                                                              0);
+		}
+		}
             }
         }
     }
+    freeMemory();
 }
 
 QSet<int> Segmentation::BFS(Segment largestSegment)
 {
-    LOG_DEBUG("Starting BFS");
+//    LOG_DEBUG("Starting BFS");
     //Segments Set
     QSet<int> segments;
     QList<int> visited;
@@ -246,13 +252,21 @@ QSet<int> Segmentation::BFS(Segment largestSegment)
         {
             if(!visited.contains(i))
             {
-            queue.push_back(i);
-            visited.push_back(i);
-            segments.insert(i);
+                queue.push_back(i);
+                visited.push_back(i);
+                segments.insert(i);
             }
         }
     }
-    LOG_DEBUG("Number of Segments Connected to lartgest Segment = %d", segments.size());
+//    LOG_DEBUG("Number of Segments Connected to %d Segment = %d", largestSegment.id_,segments.size());
     return segments;
+}
+
+void Segmentation::freeMemory()
+{
+    //Clear the map
+    pointsLabels_.clear();
+    //Clear The List
+    segmentsList_->clear();
 }
 

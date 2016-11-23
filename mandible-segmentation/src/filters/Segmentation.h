@@ -12,7 +12,6 @@
 #include "Logger.h"
 
 struct Segment{
-public:
 
     /**
      * @brief id_ : a unique id of the segment
@@ -23,7 +22,7 @@ public:
      * @brief pointsCount_
      * The count of points belongs to this segment.
      */
-    double pointsCount_;
+    mutable double pointsCount_;
 
     /**
      * @brief totalCount_
@@ -36,7 +35,7 @@ public:
      * @brief connectedSegmentsIds_
      * A Set of Ids of the equivalent (connected) segments.
      */
-    QSet<int> connectedSegmentsIds_;
+    mutable QSet<int> connectedSegmentsIds_;
 };
 
 class Segmentation
@@ -156,6 +155,11 @@ private:
      * The Largest Segment.
      */
     QSet<int> BFS(Segment largestSegment);
+
+    /**
+     * @brief freeMemory
+     */
+    void freeMemory();
 
 private:
 

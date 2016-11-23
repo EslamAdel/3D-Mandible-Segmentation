@@ -2,6 +2,8 @@
 #include <ExtractVOI.h>
 #include <Render3D.h>
 #include <Thresholding.h>
+#include <Segmentation.h>
+#include <vtkImageResample.h>
 
 int main(int argc , char ** argv)
 {
@@ -18,15 +20,25 @@ int main(int argc , char ** argv)
 
     ExtractVOI* extractor = new ExtractVOI;
 
-    extractor->setInputData(volRenderer->getShifter()->GetOutputPort());
-    extractor->setRange(75, 450, 150, 420, 350, 525);
+    extractor->setInputData(volRenderer->getShifter()->GetOutput());
+    extractor->setRange(75, 450, 150, 420, 390, 520);
 
 
-    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 1400);
+    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 2500);
+    Segmentation* teeth = new Segmentation(thresholdFilter->getThresholdedData());
 
-//    volRenderer->rayCastingRendering(extractor->getOutputData());
-    volRenderer->rayCastingRendering(thresholdFilter->getThresholdedData());
-//    volRenderer->extractSurfaces(1300, thresholdFilter->getThresholdedData());
+    vtkSmartPointer<vtkImageResample> sampleUp = vtkSmartPointer<vtkImageResample>::New();
+    sampleUp->SetInputData(teeth->getSegmentedData());
+    sampleUp->SetAxisMagnificationFactor(0, 1.5);
+    sampleUp->SetAxisMagnificationFactor(1, 1.5);
+    sampleUp->SetAxisMagnificationFactor(2, 1.5);
+    sampleUp->Update();
+
+
+//  volRenderer->rayCastingRendering(extractor->getOutputData());
+//    volRenderer->rayCastingRendering(thresholdFilter->getThresholdedData());
+//    volRenderer->extractSurfaces(2550, sampleUp->GetOutput());
+    volRenderer->rayCastingRendering(sampleUp->GetOutput());
     return EXIT_SUCCESS;
 
 }
