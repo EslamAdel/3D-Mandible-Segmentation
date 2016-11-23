@@ -1,6 +1,6 @@
 ################################################################################
-# Copyright (C) 2015 Eslam Adel <eslam.adel.mahmoud.ali@gmail.com>
-# Cluster Rendering Project
+# Copyright (C) 2016 Eslam Adel <eslam.adel.mahmoud.ali@gmail.com>
+# mandible segmentation Project
 ################################################################################
 
 CMAKE_MINIMUM_REQUIRED( VERSION 3.2 FATAL_ERROR)
