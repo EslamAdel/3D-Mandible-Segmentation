@@ -33,7 +33,7 @@ public:
      * @brief setInputData
      * @param data
      */
-    void setInputData(vtkAlgorithmOutput* input);
+    void setInputData(vtkImageData* input);
 
     /**
      * @brief getOutputData

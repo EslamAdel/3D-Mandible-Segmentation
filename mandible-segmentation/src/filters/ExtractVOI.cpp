@@ -20,10 +20,10 @@ void ExtractVOI::setRange(int xi, int xf, int yi, int yf, int zi, int zf)
 
 }
 
-void ExtractVOI::setInputData(vtkAlgorithmOutput* input)
+void ExtractVOI::setInputData(vtkImageData* input)
 {
     LOG_DEBUG("Setting Input Data");
-    extractor_->SetInputConnection(input);
+    extractor_->SetInputData(input);
 }
 
 vtkImageData* ExtractVOI::getOutputData()
