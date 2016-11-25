@@ -21,6 +21,7 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
+#include <vtkPolyDataConnectivityFilter.h>
 
 #include "Logger.h"
 

@@ -99,7 +99,11 @@ void Render3D::cubeMarchingExtraction(double isoValue, vtkImageData *data)
     vtkSmartPointer<vtkPolyDataNormals> dataNormals =
             vtkSmartPointer<vtkPolyDataNormals>::New();
 
-    dataNormals->SetInputConnection(marchCubes_->GetOutputPort());
+    vtkSmartPointer<vtkPolyDataConnectivityFilter> filt = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+    filt->SetInputConnection(marchCubes_->GetOutputPort());
+    filt->SetExtractionModeToLargestRegion();
+    filt->Update();
+    dataNormals->SetInputConnection(filt->GetOutputPort());
     dataNormals->SetFeatureAngle(60.0);
 
     vtkSmartPointer<vtkPolyDataMapper> mapper =

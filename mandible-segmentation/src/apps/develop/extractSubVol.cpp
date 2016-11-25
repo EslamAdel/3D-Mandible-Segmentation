@@ -21,22 +21,22 @@ int main(int argc , char ** argv)
     ExtractVOI* extractor = new ExtractVOI;
 
     extractor->setInputData(volRenderer->getShifter()->GetOutput());
-    extractor->setRange(75, 450, 150, 420, 390, 520);
+    extractor->setRange(75, 450, 150, 420, 390, 470);
 
 
-    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 2500);
-    Segmentation* teeth = new Segmentation(thresholdFilter->getThresholdedData());
+//    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 2500);
+//    Segmentation* teeth = new Segmentation(thresholdFilter->getThresholdedData());
 
-    vtkSmartPointer<vtkImageResample> sampleUp = vtkSmartPointer<vtkImageResample>::New();
-    sampleUp->SetInterpolationModeToCubic();
-    sampleUp->SetInputData(teeth->getSegmentedData());
-    sampleUp->SetAxisMagnificationFactor(0, 1.25);
-    sampleUp->SetAxisMagnificationFactor(1, 1.25);
-    sampleUp->SetAxisMagnificationFactor(2, 1.25);
-    sampleUp->Update();
+//    vtkSmartPointer<vtkImageResample> sampleUp = vtkSmartPointer<vtkImageResample>::New();
+//    sampleUp->SetInterpolationModeToCubic();
+//    sampleUp->SetInputData(teeth->getSegmentedData());
+//    sampleUp->SetAxisMagnificationFactor(0, 1.25);
+//    sampleUp->SetAxisMagnificationFactor(1, 1.25);
+//    sampleUp->SetAxisMagnificationFactor(2, 1.25);
+//    sampleUp->Update();
 
-//    volRenderer->extractSurfaces(1000, sampleUp->GetOutput());
-    volRenderer->rayCastingRendering(sampleUp->GetOutput());
+    volRenderer->cubeMarchingExtraction(2450, extractor->getOutputData());
+//    volRenderer->rayCastingRendering(sampleUp->GetOutput());
     return EXIT_SUCCESS;
 
 }
