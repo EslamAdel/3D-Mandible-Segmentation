@@ -21,7 +21,7 @@ int main(int argc , char ** argv)
     ExtractVOI* extractor = new ExtractVOI;
 
     extractor->setInputData(volRenderer->getShifter()->GetOutput());
-    extractor->setRange(75, 450, 150, 420, 270, 525);
+    extractor->setRange(75, 450, 150, 420, 390, 470);
 
 
 //    Thresholding *thresholdFilter = new Thresholding(extractor->getOutputData(), 2500);
@@ -35,7 +35,7 @@ int main(int argc , char ** argv)
 //    sampleUp->SetAxisMagnificationFactor(2, 1.25);
 //    sampleUp->Update();
 
-    volRenderer->cubeMarchingExtraction(1400, extractor->getOutputData());
+    volRenderer->cubeMarchingExtraction(2450, extractor->getOutputData());
 //    volRenderer->rayCastingRendering(sampleUp->GetOutput());
     return EXIT_SUCCESS;
 
