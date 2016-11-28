@@ -15,7 +15,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-\graphicspath{{images/report4/}}
+\graphicspath{{images/report5/}}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -45,7 +45,7 @@
 
 % TITLE 
 \title{\rmfamily\normalfont\spacedallcaps{
-Report \#{4}
+Report \#{5}
 }}
 
 % PROJECT NAME -> ADD YOUR PROJECT NAME HERE
@@ -73,141 +73,73 @@ Report \#{4}
 \begin{center}
 \begin{tabular}{ l | c }
 \hline 
-Report ID & 4   \\ % Change the sprint ID here 
+Report ID & 5   \\ % Change the sprint ID here 
 \hline 
 Report Duration & 1 Week \\ % Change the duration here 
 \hline 
-Beginning & 15.11.2016 \\ % Change the start data here
+Beginning & 22.11.2016 \\ % Change the start data here
 \hline 
-End & 22.11.2016 \\ % Change the end data here
+End & 29.11.2016 \\ % Change the end data here
 \hline 
 \end{tabular}
 \end{center}
 
 %\section{Objectives}
 \section{Original Objectives}
-\begin{enumerate}
-\item Segmentation of Full mandible.
-\item GUI Design.
-\end{enumerate}
 
 \section{Accomplished Objectives}
-\subsection{Segmentation of Full mandible}
-The Segmentation results of the full mandible are shown in figure \ref{fig:RC}, and \ref{fig:MC}, The full mandible was segmented with the condyle part, Figure \ref{fig:BS} shows the volume of interest before applying segmentation Algorithm. these results were obtained from case 5 which is not noisy and there is no metal artifacts, on the other hand when I used case 13 that is very noisy and contains metal artifacts at the teeth of mandible, the result is shown in figure \ref{fig:NS}, the different projections (sagittal, coronal, and axial) of case 13 are shown in figure \ref{fig:NV}. Our approach works correctly and the full mandible was segmented as well, But these artifact must be removed, which is another study that we need further research.
 
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.33\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{BSS}
-        \caption{Side View of Volume}
+        \includegraphics[width=\textwidth]{RCSO}
+        \caption{Ray Casting}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{BSF}
-        \caption{Front View of Volume}
+        \includegraphics[width=\textwidth]{MCSO}
+        \caption{Marching Cubes}
     \end{subfigure}
-      \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{BST}
-        \caption{Top View of Volume}
-    \end{subfigure}
-    \caption{Volume of Interest Before Segmentation with different Views}
-    \label{fig:BS}
+    \caption{Teeth Segmentation using labeling and connectivity algorithm.}
+    \label{fig:CL}
 \end{figure}
 
 
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.33\textwidth}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{RCS}
-        \caption{Side View of Volume}
+        \includegraphics[width=\textwidth]{MCF1}
+        \caption{Top Front View}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{RCF}
-        \caption{Front View of Volume}
+        \includegraphics[width=\textwidth]{MCF2}
+        \caption{Front View}
     \end{subfigure}
       \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{RCT}
-        \caption{Top View of Volume}
+        \includegraphics[width=\textwidth]{MCS1}
+        \caption{First Side}
     \end{subfigure}
-    \caption{Rendering of Volume After Segmentation with different Views using  Ray Casting rendering technique.}
-    \label{fig:RC}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \begin{subfigure}[b]{0.33\textwidth}
+        \hfill
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{MCS}
-        \caption{Side View of Volume}
+        \includegraphics[width=\textwidth]{MCS2}
+        \caption{Second Side}
     \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{MCF}
-        \caption{Front View of Volume}
-    \end{subfigure}
-      \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{MCT}
-        \caption{Top View of Volume}
-    \end{subfigure}
-    \caption{Rendering of Volume After Segmentation with different Views using  Marching Cubes rendering technique.}
-    \label{fig:MC}
-\end{figure}
-
-
-\begin{figure}
-    \centering
-    \begin{subfigure}[b]{0.33\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{NSV}
-        \caption{Sagittal View}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{NFV}
-        \caption{Coronal View}
-    \end{subfigure}
-      \hfill
-    \begin{subfigure}[b]{0.33\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{NTV}
-        \caption{Axial View}
-    \end{subfigure}
-    \caption{The Different projections of case 13 that contains artifacts.}
-    \label{fig:NV}
-\end{figure}
-
-\begin{figure}
-\centering 
-\includegraphics[scale=0.5]{NS}
-\caption{The Result of segmentation of case 13 that contains artifacts}
-\label{fig:NS}
+    \caption{Different Views of segmented Teeth with \textit{vtkPolyDataConnectivityFilter}}
+    \label{fig:PDCF}
 \end{figure}
 
 \section{Missed Objectives}
-\begin{itemize}
-\item GUI Design
-\end{itemize}
 
 \section{Next Step}
-\begin{itemize}
-\item Saving the mandible as STL Volume.
-\item Code enhancement and memory mangement.
-\item Design and implement a simple and effective GUI.
-\item Searching about artifacts removal.
-\end{itemize}   
+   
 %******************************************************************************
 % DOCUMENT ENDS HERE 
 %******************************************************************************
