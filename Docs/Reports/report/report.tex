@@ -15,7 +15,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-\graphicspath{{images/report5/}}
+\graphicspath{{images/report6/}}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -45,7 +45,7 @@
 
 % TITLE 
 \title{\rmfamily\normalfont\spacedallcaps{
-Report \#{5}
+Report \#{6}
 }}
 
 % PROJECT NAME -> ADD YOUR PROJECT NAME HERE
@@ -73,13 +73,13 @@ Report \#{5}
 \begin{center}
 \begin{tabular}{ l | c }
 \hline 
-Report ID & 5   \\ % Change the sprint ID here 
+Report ID & 6  \\ % Change the sprint ID here 
 \hline 
 Report Duration & 1 Week \\ % Change the duration here 
 \hline 
-Beginning & 22.11.2016 \\ % Change the start data here
+Beginning & 29.11.2016 \\ % Change the start data here
 \hline 
-End & 29.11.2016 \\ % Change the end data here
+End & 5.12.2016 \\ % Change the end data here
 \hline 
 \end{tabular}
 \end{center}
@@ -87,79 +87,55 @@ End & 29.11.2016 \\ % Change the end data here
 %\section{Objectives}
 \section{Original Objectives}
 \begin{itemize}
+\item Enabling GUI Support in VTK.
+\item GUI Design.
+\item Maxilla segmentation.
 \item Teeth Segmentation.
-\item Visualization of Segmented Teeth.
-\item GUI Implementation.
-\item Saving Segmented Data in STL Format.
+\item X-Ray Effect.
 \end{itemize}
 
 \section{Accomplished Objectives}
-\subsection{Teeth Segmentation}
-At first I used the labeling and connectivity algorithm that has been used in mandible segmentation to segment the teeth, and I changed some paramters which are the region of interest of the skull, and the threshold values. I did that for the segmented mandible and also for the skull before mandible segmentation and both of them works correctly. So no need to segment the mandible to be able to segment the teeth of mandible.
+\subsection{Enabling GUI Support in VTK}
+To Enable GUI support of VTK Library I had to recompile the source code of the VTK library, and reconfigure CMake to generate a new Makefile and then I can compile the project and install it and use Qt wrapper classes to be able to design a GUI Application using Qt. It is mainly the \textit{QVTKWidget} class. But after I did that I found that it is not working as It by default compiled to support Qt4 not Qt5 that led me to recompile the VTK library again to make it supports Qt5 not Qt4 and finally it works.
 
-\subsection{Visualization of Segmented Teeth}
-The segmented teeth using labeling and connectivity algorithm are shown in figure \ref{fig:CL}, It is clear that the data is badly visualized I don't know why, maybe due to thresholding that reduces the number of data points or there is another reason. So I have to used another way to get more clear and smooth teeth.
-
-\vspace{1cm}
-I found that extracting iso surfaces of the volume according to a specific iso value looks like thresholding process and then I need to have a connectivity filter to get the largest connected segment which is already exists in VTK library, It is \textit{vtkPolyDataConnectivityFilter} and I can set extraction mode to largest segment using \textit{SetExtractionModeToLargestRegion} method. This method gives me a very nice segmented teeth as shown in figure \ref{fig:PDCF}. I also found that I can use this method to segment the mandible too in few seconds. The extracted data is a poly data not image data so only surface rendering must be used for this method.
-
+\subsection{GUI Design}
+After Enabling GUI Support in VTK library, I have designed an Initial GUI to be able to load any volume and set the segmentation parameters dynamically according to the used dataset, figure \ref{fig:GUI} shows the initial GUI taps I have a tap to load data and set the rendering mode and another tab to set segmentation paramters. As shown in figure \ref{fig:EX} I have loaded a sample dataset and I can using a slider set the iso value of the extracted surfaces interactively. I know that it is a poor GUI yet now but I will work to improve it and make it more functional and more interactive.
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.65\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{RCSO}
-        \caption{Ray Casting}
+        \includegraphics[width=\textwidth]{T1}
+        \caption{Inital GUI Tap1}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.65\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{MCSO}
-        \caption{Marching Cubes}
+        \includegraphics[width=\textwidth]{T2}
+        \caption{Inital GUI Tap2}
     \end{subfigure}
-    \caption{Teeth Segmentation using labeling and connectivity algorithm.}
-    \label{fig:CL}
+    \caption{Initial GUI Design for Segmenter Application.}
+    \label{fig:GUI}
 \end{figure}
 
 
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{MCS2}
-        \caption{First Side}
-    \end{subfigure}
-        \hfill
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{MCS1}
-        \caption{Second Side}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{MCF1}
-        \caption{Top View}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{MCF2}
-        \caption{Front View}
-    \end{subfigure}
-    \caption{Different Views of segmented Teeth with \textit{vtkPolyDataConnectivityFilter}}
-    \label{fig:PDCF}
+    \includegraphics[scale=0.5]{EX}
+    \caption{Rendering Example using Initial GUI}
+    \label{fig:EX}
 \end{figure}
 
 \section{Missed Objectives}
-\subsection{GUI Design}
-Use Qt Gui libraries to make a simple graphical user interface that allow the user to load any volume and interactively set the segmentation parameters to segment desired object (mandible, or teeth).
-\subsection{Saving Segmented Data in STL Format}
-write the segmented data to STL file using \textit{vtkSTLWriter}. To be able to use it for processing without loading the whole dataset of the skull.
+\begin{itemize}
+\item Maxilla segmentation.
+\item Teeth Segmentation.
+\item X-Ray Effect.
+\end{itemize}
 
 \section{Next Step}
 \begin{itemize}
-\item Do missed Objectives.
-\item Optimization of the framework.
+\item Enhance the GUI. 
+\item Do missed objectives.
 \end{itemize}
 %******************************************************************************
 % DOCUMENT ENDS HERE 
