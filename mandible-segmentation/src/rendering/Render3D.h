@@ -89,6 +89,7 @@ public:
      */
     void rayCastingRendering(vtkImageData *data);
 
+    void setRenderWindow(vtkRenderWindow* win);
 private:
 
     /**
@@ -117,7 +118,7 @@ private:
     /**
      * @brief window_
      */
-    vtkSmartPointer<vtkRenderWindow> window_;
+    vtkRenderWindow* window_;
 
     /**
      * @brief interactor_

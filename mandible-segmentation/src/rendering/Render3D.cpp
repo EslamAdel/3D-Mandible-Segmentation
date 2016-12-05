@@ -4,11 +4,11 @@ Render3D::Render3D()
 {
     LOG_DEBUG("Initializing The 3D Renderer");
     renderer_ = vtkSmartPointer<vtkRenderer>::New();
-    window_ = vtkSmartPointer<vtkRenderWindow>::New();
-    window_->AddRenderer(renderer_);
+//    window_ = vtkSmartPointer<vtkRenderWindow>::New();
+//    window_->AddRenderer(renderer_);
 
-    interactor_ = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    interactor_->SetRenderWindow(window_);
+   // interactor_ = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+//    interactor_->SetRenderWindow(window_);
     actor_ = vtkSmartPointer<vtkActor>::New();
     camera_ = vtkSmartPointer<vtkCamera>::New();
     setCameraParameters();
@@ -175,6 +175,15 @@ void Render3D::rayCastingRendering(vtkImageData* data)
 
 }
 
+void Render3D::setRenderWindow(vtkRenderWindow* win)
+{
+    window_ = win;
+    window_->AddRenderer(renderer_);
+    //interactor_->SetRenderWindow(window_);
+
+
+}
+
 void Render3D::setActormapper(vtkSmartPointer<vtkMapper> dataMapper)
 {
     actor_->SetMapper(dataMapper);
@@ -196,9 +205,10 @@ void Render3D::updateRenderer()
     renderer_->SetActiveCamera(camera_);
     renderer_->ResetCamera();
     renderer_->SetBackground(0, 0, 0);
-    window_->SetSize(640, 480);
-    interactor_->Initialize();
-    interactor_->Start();
+//    window_->SetSize(640, 480);
+    //interactor_->Initialize();
+//    interactor_->Start();
+//    window_->Render();
 }
 
 
