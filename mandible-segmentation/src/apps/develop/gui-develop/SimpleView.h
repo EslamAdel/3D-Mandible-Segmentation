@@ -23,6 +23,9 @@ public:
 private slots:
     void on_pushButton_clicked();
 
+
+    void on_horizontalSlider_9_sliderReleased();
+
 private:
     Ui::SimpleView *ui;
     Render3D* renderer_;

@@ -5,8 +5,8 @@ SimpleView::SimpleView(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SimpleView)
 {
-//    QVTKWidget w;
-//    w.GetRenderWindow()
+    //    QVTKWidget w;
+    //    w.GetRenderWindow()
 
     ui->setupUi(this);
     renderer_ = new Render3D;
@@ -29,7 +29,14 @@ void SimpleView::on_pushButton_clicked()
     renderer_->loadData((char*) volumeDir_.toStdString().c_str());
     renderer_->rescaleData(renderer_->getScale(),
                            renderer_->getShift());
-    renderer_->rayCastingRendering(renderer_->getShifter()->GetOutput());
 
 
+}
+
+
+
+void SimpleView::on_horizontalSlider_9_sliderReleased()
+{
+
+    renderer_->extractSurfaces( ui->horizontalSlider_9->value(), renderer_->getShifter()->GetOutput());
 }
