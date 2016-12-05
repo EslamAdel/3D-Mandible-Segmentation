@@ -26,6 +26,8 @@ private slots:
 
     void on_horizontalSlider_9_sliderReleased();
 
+    void on_horizontalSlider_9_sliderMoved(int position);
+
 private:
     Ui::SimpleView *ui;
     Render3D* renderer_;

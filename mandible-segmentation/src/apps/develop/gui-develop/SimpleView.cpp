@@ -29,7 +29,7 @@ void SimpleView::on_pushButton_clicked()
     renderer_->loadData((char*) volumeDir_.toStdString().c_str());
     renderer_->rescaleData(renderer_->getScale(),
                            renderer_->getShift());
-
+    on_horizontalSlider_9_sliderReleased();
 
 }
 
@@ -39,4 +39,9 @@ void SimpleView::on_horizontalSlider_9_sliderReleased()
 {
 
     renderer_->extractSurfaces( ui->horizontalSlider_9->value(), renderer_->getShifter()->GetOutput());
+}
+
+void SimpleView::on_horizontalSlider_9_sliderMoved(int position)
+{
+    ui->label_9->setText(QString::number(position));
 }

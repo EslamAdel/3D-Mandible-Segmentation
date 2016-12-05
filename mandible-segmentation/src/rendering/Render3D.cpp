@@ -191,12 +191,12 @@ void Render3D::setActormapper(vtkSmartPointer<vtkMapper> dataMapper)
 
 void Render3D::setCameraParameters()
 {
-    camera_->SetViewUp(0, 0, -1);
-    camera_->SetPosition(0, 1, 0);
+//    camera_->SetViewUp(0, 0, -1);
+    camera_->SetPosition(1, 1, 2);
     camera_->SetFocalPoint(0, 0, 0);
-    camera_->ComputeViewPlaneNormal();
-    camera_->Azimuth(30.0);
-    camera_->Elevation(30.0);
+//    camera_->ComputeViewPlaneNormal();
+//    camera_->Azimuth(30.0);
+//    camera_->Elevation(30.0);
 }
 
 void Render3D::updateRenderer()
@@ -205,6 +205,7 @@ void Render3D::updateRenderer()
     renderer_->SetActiveCamera(camera_);
     renderer_->ResetCamera();
     renderer_->SetBackground(0, 0, 0);
+    window_->Render();
 //    window_->SetSize(640, 480);
     //interactor_->Initialize();
 //    interactor_->Start();
