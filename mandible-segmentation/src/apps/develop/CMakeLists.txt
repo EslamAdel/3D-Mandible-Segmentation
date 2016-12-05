@@ -106,3 +106,6 @@ qt5_use_modules( ${SEGMENTATION_EXECUTABLE} Core Widgets OpenGL Gui )
 ################################### install
 # Install the executable (generate with 'make install' in the bin directory)
 install( TARGETS ${MANDIBLE_SEGMENTATION_EXECUTABLE} DESTINATION bin )
+
+add_subdirectory(gui-develop)
+
