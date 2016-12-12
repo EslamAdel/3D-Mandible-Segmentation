@@ -1,14 +1,17 @@
 ﻿#include "Render3D.h"
 
-Render3D::Render3D()
+Render3D::Render3D(vtkRenderWindow* win): window_(win)
 {
     LOG_DEBUG("Initializing The 3D Renderer");
+    noWindow_ = window_ == NULL ? true:false;
     renderer_ = vtkSmartPointer<vtkRenderer>::New();
-//    window_ = vtkSmartPointer<vtkRenderWindow>::New();
-//    window_->AddRenderer(renderer_);
-
-   // interactor_ = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-//    interactor_->SetRenderWindow(window_);
+    if(noWindow_)
+    {
+    window_ = vtkRenderWindow::New();
+    interactor_ = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    interactor_->SetRenderWindow(window_);
+    }
+    window_->AddRenderer(renderer_);
     actor_ = vtkSmartPointer<vtkActor>::New();
     camera_ = vtkSmartPointer<vtkCamera>::New();
     setCameraParameters();
@@ -175,15 +178,6 @@ void Render3D::rayCastingRendering(vtkImageData* data)
 
 }
 
-void Render3D::setRenderWindow(vtkRenderWindow* win)
-{
-    window_ = win;
-    window_->AddRenderer(renderer_);
-    //interactor_->SetRenderWindow(window_);
-
-
-}
-
 void Render3D::setActormapper(vtkSmartPointer<vtkMapper> dataMapper)
 {
     actor_->SetMapper(dataMapper);
@@ -191,12 +185,12 @@ void Render3D::setActormapper(vtkSmartPointer<vtkMapper> dataMapper)
 
 void Render3D::setCameraParameters()
 {
-//    camera_->SetViewUp(0, 0, -1);
-    camera_->SetPosition(1, 1, 2);
+    camera_->SetViewUp(0, 0, -1);
+    camera_->SetPosition(0, 1, 0);
     camera_->SetFocalPoint(0, 0, 0);
-//    camera_->ComputeViewPlaneNormal();
-//    camera_->Azimuth(30.0);
-//    camera_->Elevation(30.0);
+    camera_->ComputeViewPlaneNormal();
+    camera_->Azimuth(30.0);
+    camera_->Elevation(30.0);
 }
 
 void Render3D::updateRenderer()
@@ -206,10 +200,12 @@ void Render3D::updateRenderer()
     renderer_->ResetCamera();
     renderer_->SetBackground(0, 0, 0);
     window_->Render();
-//    window_->SetSize(640, 480);
-    //interactor_->Initialize();
-//    interactor_->Start();
-//    window_->Render();
+    if(noWindow_)
+    {
+    window_->SetSize(640, 480);
+    interactor_->Initialize();
+    interactor_->Start();
+    }
 }
 
 

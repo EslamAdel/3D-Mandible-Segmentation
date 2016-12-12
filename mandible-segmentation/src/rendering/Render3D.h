@@ -33,7 +33,7 @@ public:
     /**
      * @brief Render3D
      */
-    explicit Render3D();
+    explicit Render3D(vtkRenderWindow* win = NULL);
 
     /**
      * @brief loadData
@@ -89,7 +89,6 @@ public:
      */
     void rayCastingRendering(vtkImageData *data);
 
-    void setRenderWindow(vtkRenderWindow* win);
 private:
 
     /**
@@ -167,6 +166,8 @@ public:
      * @brief isDataRescaled
      */
     bool isDataRescaled;
+
+    bool noWindow_;
 };
 
 

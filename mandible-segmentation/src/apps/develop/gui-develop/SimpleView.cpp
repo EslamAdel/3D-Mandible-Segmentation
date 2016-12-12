@@ -9,8 +9,7 @@ SimpleView::SimpleView(QWidget *parent) :
     //    w.GetRenderWindow()
 
     ui->setupUi(this);
-    renderer_ = new Render3D;
-    renderer_->setRenderWindow( ui->qvtkWidget->GetRenderWindow());
+    renderer_ = new Render3D( ui->qvtkWidget->GetRenderWindow());
 }
 
 SimpleView::~SimpleView()
