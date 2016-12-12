@@ -28,6 +28,10 @@ private slots:
 
     void on_horizontalSlider_9_sliderMoved(int position);
 
+    void on_radioButton_clicked(bool checked);
+
+    void on_radioButton_2_clicked(bool checked);
+
 private:
     Ui::SimpleView *ui;
     Render3D* renderer_;

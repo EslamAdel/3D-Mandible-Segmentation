@@ -31,22 +31,12 @@ private:
      */
     void doThresholding_();
 
-    /**
-     * @brief createImageData_
-     */
-    void createImageData_();
-
 private:
 
     /**
      * @brief inputData_
      */
     vtkSmartPointer<vtkImageData> inputData_;
-
-    /**
-     * @brief outputData_
-     */
-    vtkSmartPointer<vtkImageData> outputData_;
 
     /**
      * @brief threshold_

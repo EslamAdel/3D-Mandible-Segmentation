@@ -104,6 +104,12 @@
       <property name="title">
        <string>Rendering</string>
       </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
       <widget class="QRadioButton" name="radioButton">
        <property name="geometry">
         <rect>
@@ -115,6 +121,9 @@
        </property>
        <property name="text">
         <string>Ray Casting</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
       <widget class="QRadioButton" name="radioButton_2">
@@ -128,6 +137,9 @@
        </property>
        <property name="text">
         <string>Surface</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
       <widget class="QLabel" name="label_8">
@@ -167,6 +179,9 @@
        </property>
        <property name="maximum">
         <number>4000</number>
+       </property>
+       <property name="value">
+        <number>1400</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -456,5 +471,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>radioButton_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>horizontalSlider_9</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>75</x>
+     <y>304</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>57</x>
+     <y>357</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

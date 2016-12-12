@@ -172,6 +172,7 @@ void Render3D::rayCastingRendering(vtkImageData* data)
     volume->SetMapper(mapper);
     volume->SetProperty(volumeProperty);
     renderer_->AddViewProp(volume);
+    renderer_->RemoveActor(actor_);
 
     updateRenderer();
 
@@ -181,6 +182,7 @@ void Render3D::rayCastingRendering(vtkImageData* data)
 void Render3D::setActormapper(vtkSmartPointer<vtkMapper> dataMapper)
 {
     actor_->SetMapper(dataMapper);
+    renderer_->AddActor(actor_);
 }
 
 void Render3D::setCameraParameters()
@@ -195,7 +197,6 @@ void Render3D::setCameraParameters()
 
 void Render3D::updateRenderer()
 {
-    renderer_->AddActor(actor_);
     renderer_->SetActiveCamera(camera_);
     renderer_->ResetCamera();
     renderer_->SetBackground(0, 0, 0);
