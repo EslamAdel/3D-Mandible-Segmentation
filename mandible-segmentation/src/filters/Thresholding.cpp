@@ -1,11 +1,13 @@
 #include "Thresholding.h"
 
 
-Thresholding::Thresholding(vtkSmartPointer<vtkImageData> input, unsigned short threshold):
+Thresholding::Thresholding(vtkImageData* input, unsigned short threshold):
     inputData_(input), threshold_(threshold)
 {
     LOG_DEBUG("Initializing Thresholding, threshold = %d", threshold_);
 
+    if(inputData_ != NULL)
+    {
     dimentions_ = inputData_->GetDimensions();
 
     LOG_DEBUG("dimentions: %d x %d x %d", dimentions_[0],
@@ -13,11 +15,29 @@ Thresholding::Thresholding(vtkSmartPointer<vtkImageData> input, unsigned short t
             dimentions_[2]);
     extent_ = inputData_->GetExtent();
     doThresholding_();
+    }
 }
 
 vtkSmartPointer<vtkImageData> Thresholding::getThresholdedData()
 {
     return inputData_;
+}
+
+void Thresholding::setInputData(vtkImageData *inData)
+{
+    inputData_ = inData;
+    dimentions_ = inputData_->GetDimensions();
+
+    LOG_DEBUG("dimentions: %d x %d x %d", dimentions_[0],
+            dimentions_[1],
+            dimentions_[2]);
+    extent_ = inputData_->GetExtent();
+}
+
+void Thresholding::setThreshold(unsigned int thr)
+{
+    threshold_ = thr;
+    doThresholding_();
 }
 
 void Thresholding::doThresholding_()

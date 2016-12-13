@@ -1,31 +1,48 @@
 #include "Segmentation.h"
 
-Segmentation::Segmentation(vtkSmartPointer<vtkImageData> input):inputData_(input)
+Segmentation::Segmentation(vtkImageData* input):inputData_(input)
 {
 
     LOG_DEBUG("initialize Segmentation");
-    //Get input Data Dimentions
-    dimentions_ = inputData_->GetDimensions();
-
-    //Get Extent (Rage of data that extracted from the original Volume)
-    extent_ = inputData_->GetExtent();
-
     //Initialization
     currentId_ = 0;
     visitedSegments_.clear();
     pointsLabels_.clear();
     outputData_ = vtkSmartPointer<vtkImageData>::New();
     segmentsList_ = new QList<Segment>;
+    if(inputData_ != NULL)
+    {
+    //Get input Data Dimentions
+    dimentions_ = inputData_->GetDimensions();
+
+    //Get Extent (Rage of data that extracted from the original Volume)
+    extent_ = inputData_->GetExtent();
     initializeLabelMap_();
-    createOutputData_();
+    //createOutputData_();
 
     //Run segmentation Algorithm
     startLabeling_();
+    }
 }
 
-vtkSmartPointer<vtkImageData> Segmentation::getSegmentedData()
+vtkImageData* Segmentation::getSegmentedData()
 {
-    return outputData_;
+    return inputData_;
+}
+
+void Segmentation::setInputData(vtkImageData *inData)
+{
+    inputData_ = inData;
+    //Get input Data Dimentions
+    dimentions_ = inputData_->GetDimensions();
+
+    //Get Extent (Rage of data that extracted from the original Volume)
+    extent_ = inputData_->GetExtent();
+    initializeLabelMap_();
+    //createOutputData_();
+
+    //Run segmentation Algorithm
+    startLabeling_();
 }
 
 void Segmentation::createOutputData_()
@@ -205,13 +222,13 @@ void Segmentation::setOutputData(QSet<int> segments)
                 int ijk[3] = {i, j,k};
                 if(inputData_->GetScalarComponentAsDouble(i, j, k, 0) > 0)
                 {
-                    if(segments.contains(pointsLabels_[inputData_->ComputePointId(ijk)]))
+                    if(!segments.contains(pointsLabels_[inputData_->ComputePointId(ijk)]))
                     {
-                        outputData_->SetScalarComponentFromDouble(i,
+                        inputData_->SetScalarComponentFromDouble(i,
                                                                   j,
                                                                   k,
                                                                   0,
-                                                                  inputData_->GetScalarComponentAsDouble(i, j, k, 0));
+                                                                  0);
                     }
                 }
 
@@ -262,6 +279,8 @@ QSet<int> Segmentation::BFS(Segment largestSegment)
 
 void Segmentation::freeMemory()
 {
+    //Reset Id
+    currentId_ = 0;
     //Clear the map
     pointsLabels_.clear();
     //Clear The List

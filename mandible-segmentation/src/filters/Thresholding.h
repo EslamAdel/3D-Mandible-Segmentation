@@ -15,14 +15,17 @@ public:
      * @param input
      * @param threshold
      */
-    explicit Thresholding(vtkSmartPointer<vtkImageData> input,
-                          unsigned short threshold);
+    explicit Thresholding(vtkImageData* input = NULL,
+                          unsigned short threshold = 0);
 
     /**
      * @brief getThresholdedData
      * @return
      */
     vtkSmartPointer<vtkImageData> getThresholdedData();
+
+    void setInputData(vtkImageData* inData);
+    void setThreshold(unsigned int thr);
 
 private:
 
@@ -36,7 +39,7 @@ private:
     /**
      * @brief inputData_
      */
-    vtkSmartPointer<vtkImageData> inputData_;
+    vtkImageData* inputData_;
 
     /**
      * @brief threshold_

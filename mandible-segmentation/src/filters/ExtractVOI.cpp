@@ -10,7 +10,7 @@ ExtractVOI::ExtractVOI()
 
 void ExtractVOI::setRange(int xi, int xf, int yi, int yf, int zi, int zf)
 {
-    LOG_DEBUG("Setting Sub Volume Range");
+    LOG_DEBUG("Setting Sub Volume Range %d:%d, %d:%d, %d:%d",xi,xf,yi,yf,zi,zf);
     extractor_->SetVOI(xi, xf,
                        yi, yf,
                        zi, zf);

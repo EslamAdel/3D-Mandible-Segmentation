@@ -48,7 +48,7 @@ public:
      * vtkImageData source of volume after extracting the VOI (volume of
      * interest) and thresholding.
      */
-    explicit Segmentation(vtkSmartPointer<vtkImageData> input);
+    explicit Segmentation(vtkImageData* input = NULL);
 
     /**
      * @brief getSegmentedData
@@ -56,7 +56,9 @@ public:
      * @return
      * A pointer to the segmented image Data.
      */
-    vtkSmartPointer<vtkImageData> getSegmentedData();
+    vtkImageData *getSegmentedData();
+
+    void setInputData(vtkImageData* inData);
 
 private:
 
@@ -166,7 +168,7 @@ private:
     /**
      * @brief inputData_
      */
-    vtkSmartPointer<vtkImageData> inputData_;
+    vtkImageData* inputData_;
 
     /**
      * @brief outputData_
