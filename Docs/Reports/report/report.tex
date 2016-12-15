@@ -1,7 +1,7 @@
 %******************************************************************************
 % KOMA-Script article scrartcl
 %******************************************************************************
-\documentclass[12pt, b5paper]{article} 
+\documentclass[11pt, b5paper]{article} 
 
 % Add here all the packages that will be used in the document
 \include{packages}
@@ -15,7 +15,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-\graphicspath{{images/report6/}}
+\graphicspath{{images/report7/}}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -45,7 +45,7 @@
 
 % TITLE 
 \title{\rmfamily\normalfont\spacedallcaps{
-Report \#{6}
+Report \#{7}
 }}
 
 % PROJECT NAME -> ADD YOUR PROJECT NAME HERE
@@ -73,13 +73,13 @@ Report \#{6}
 \begin{center}
 \begin{tabular}{ l | c }
 \hline 
-Report ID & 6  \\ % Change the sprint ID here 
+Report ID & 7  \\ % Change the sprint ID here 
 \hline 
 Report Duration & 1 Week \\ % Change the duration here 
 \hline 
-Beginning & 29.11.2016 \\ % Change the start data here
+Beginning & 6.12.2016 \\ % Change the start data here
 \hline 
-End & 5.12.2016 \\ % Change the end data here
+End & 13.12.2016 \\ % Change the end data here
 \hline 
 \end{tabular}
 \end{center}
@@ -87,54 +87,71 @@ End & 5.12.2016 \\ % Change the end data here
 %\section{Objectives}
 \section{Original Objectives}
 \begin{itemize}
-\item Enabling GUI Support in VTK.
-\item GUI Design.
+\item Enhance GUI.
 \item Maxilla segmentation.
 \item Teeth Segmentation.
 \item X-Ray Effect.
 \end{itemize}
 
 \section{Accomplished Objectives}
-\subsection{Enabling GUI Support in VTK}
-To Enable GUI support of VTK Library I had to recompile the source code of the VTK library, and reconfigure CMake to generate a new Makefile and then I can compile the project and install it and use Qt wrapper classes to be able to design a GUI Application using Qt. It is mainly the \textit{QVTKWidget} class. But after I did that I found that it is not working as It by default compiled to support Qt4 not Qt5 that led me to recompile the VTK library again to make it supports Qt5 not Qt4 and finally it works.
+\subsection{Enhance GUI}
+I have worked on the GUI to improve its functionality and user interactivity, as shown in figure \ref{fig:C15} and \ref{fig:C5} the Volume of interest is selected using some slider and also the threshold can be selected using another slider, the change automatically rendered on the display widget in interactive mannar, I have used different cases for testing they are case 15 and case 5. It is easy to segment the mandible and Maxilla of the dataset,The user just have to change the volume of interest and run segmentation algorithm again.
 
-\subsection{GUI Design}
-After Enabling GUI Support in VTK library, I have designed an Initial GUI to be able to load any volume and set the segmentation parameters dynamically according to the used dataset, figure \ref{fig:GUI} shows the initial GUI taps I have a tap to load data and set the rendering mode and another tab to set segmentation paramters. As shown in figure \ref{fig:EX} I have loaded a sample dataset and I can using a slider set the iso value of the extracted surfaces interactively. I know that it is a poor GUI yet now but I will work to improve it and make it more functional and more interactive.
+\subsection{Maxilla Segmentation}
+Figure \ref{Fig:C5U1}, \ref{Fig:C5U2}, and \ref{fig:C15U} shows the result of maxilla segmentation for different cases.
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.65\textwidth}
+    \begin{subfigure}[b]{0.75\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{T1}
-        \caption{Inital GUI Tap1}
+        \includegraphics[width=\textwidth]{C15U}
+        \caption{Maxilla}
+        \label{fig:C15U}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.65\textwidth}
+    \begin{subfigure}[b]{0.75\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{T2}
-        \caption{Inital GUI Tap2}
+        \includegraphics[width=\textwidth]{C15L}
+        \caption{Mandible}
     \end{subfigure}
-    \caption{Initial GUI Design for Segmenter Application.}
-    \label{fig:GUI}
+    \caption{Segmentation of Mandible and Maxilla of Case 15}
+    \label{fig:C15}
 \end{figure}
-
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{EX}
-    \caption{Rendering Example using Initial GUI}
-    \label{fig:EX}
+    \begin{subfigure}[b]{0.75\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{C5U1}
+        \caption{Maxilla}
+        \label{Fig:C5U1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.75\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{C5U2}
+        \caption{Maxilla}
+         \label{Fig:C5U2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.75\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{C5L}
+        \caption{Mandible}
+    \end{subfigure}
+    \caption{Segmentation of Mandible and Maxilla of Case 5}
+    \label{fig:C5}
 \end{figure}
+
+
 
 \section{Missed Objectives}
 \begin{itemize}
-\item Maxilla segmentation.
 \item Teeth Segmentation.
 \item X-Ray Effect.
 \end{itemize}
 
 \section{Next Step}
 \begin{itemize}
-\item Enhance the GUI. 
 \item Do missed objectives.
 \end{itemize}
 %******************************************************************************
