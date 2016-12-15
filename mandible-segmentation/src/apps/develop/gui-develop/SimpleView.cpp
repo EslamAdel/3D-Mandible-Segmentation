@@ -23,8 +23,11 @@ SimpleView::~SimpleView()
 void SimpleView::setSliderRanges()
 {
     ui->horizontalSlider_2->setRange(0,dataDimentions_[0]-1);
+    ui->horizontalSlider_2->setValue(0);
     ui->horizontalSlider_5->setRange(0,dataDimentions_[1]-1);
+    ui->horizontalSlider_5->setValue(0);
     ui->horizontalSlider_3->setRange(0,dataDimentions_[2]-1);
+    ui->horizontalSlider_3->setValue(0);
 
 
     ui->horizontalSlider->setRange(0,dataDimentions_[0]-1);

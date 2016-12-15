@@ -281,6 +281,8 @@ void Segmentation::freeMemory()
 {
     //Reset Id
     currentId_ = 0;
+    //CLear Visited Segments
+    visitedSegments_.clear();
     //Clear the map
     pointsLabels_.clear();
     //Clear The List
