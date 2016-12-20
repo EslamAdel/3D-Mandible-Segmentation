@@ -136,15 +136,15 @@ void Render3D::rayCastingRendering(vtkImageData* data)
             vtkSmartPointer<vtkColorTransferFunction>::New();
     volumeColor->AddRGBPoint( -3024, 0, 0, 0, 0.5, 0.0);
     volumeColor->AddRGBPoint( -16, 0.73, 0.25, 0.30, 0.49, .61);
-    volumeColor->AddRGBPoint( 641, .90, .82, .56, .5, 0.0);
-    volumeColor->AddRGBPoint( 3071, 1, 1, 1, .5, 0.0);
+    volumeColor->AddRGBPoint( 641, 1, .6, .2, .5, 0.0);
+    volumeColor->AddRGBPoint( 4096, 1, 1, 1, .5, 0.0);
 
     vtkSmartPointer<vtkPiecewiseFunction> volumeScalarOpacity =
             vtkSmartPointer<vtkPiecewiseFunction>::New();
     volumeScalarOpacity->AddPoint(-3024, 0, 0.5, 0.0);
     volumeScalarOpacity->AddPoint(-16, 0, .49, .61);
-    volumeScalarOpacity->AddPoint(641, .72, .5, 0.0);
-    volumeScalarOpacity->AddPoint(3071, .71, 0.5, 0.0);
+    volumeScalarOpacity->AddPoint(641, 0.1, .5, 0.0);
+    volumeScalarOpacity->AddPoint(4096, 1.0, 0.5, 0.0);
     mapper->SetBlendModeToComposite();
 
     vtkSmartPointer<vtkPiecewiseFunction> volumeGradientOpacity =
