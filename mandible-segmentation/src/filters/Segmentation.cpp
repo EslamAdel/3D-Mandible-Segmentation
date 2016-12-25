@@ -17,7 +17,7 @@ Segmentation::Segmentation(vtkImageData* input):inputData_(input)
 
     //Get Extent (Rage of data that extracted from the original Volume)
     extent_ = inputData_->GetExtent();
-    initializeLabelMap_();
+    //initializeLabelMap_();
     //createOutputData_();
 
     //Run segmentation Algorithm
@@ -38,7 +38,7 @@ void Segmentation::setInputData(vtkImageData *inData)
 
     //Get Extent (Rage of data that extracted from the original Volume)
     extent_ = inputData_->GetExtent();
-    initializeLabelMap_();
+    //initializeLabelMap_();
     //createOutputData_();
 
     //Run segmentation Algorithm
@@ -125,7 +125,7 @@ QSet<int> Segmentation::getNeighbours_(int i, int j, int k)
                 ijk[2] = k;
                 if(inputData_->GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0) > 0)
                 {
-                    if(pointsLabels_[inputData_->ComputePointId(ijk)] >= 0)
+                    if(pointsLabels_.contains(inputData_->ComputePointId(ijk)))
                     {
                         segmentsIds.insert(pointsLabels_[inputData_->ComputePointId(ijk)]);
                     }
@@ -136,7 +136,7 @@ QSet<int> Segmentation::getNeighbours_(int i, int j, int k)
             ijk[2] = k - 1;
             if(inputData_->GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0) > 0)
             {
-                if(pointsLabels_[inputData_->ComputePointId(ijk)] >= 0)
+                if(pointsLabels_.contains(inputData_->ComputePointId(ijk)))
                 {
                     segmentsIds.insert(pointsLabels_[inputData_->ComputePointId(ijk)]);
                 }
