@@ -17,6 +17,8 @@ Segmentation::Segmentation(vtkImageData* input):inputData_(input)
 
     //Get Extent (Rage of data that extracted from the original Volume)
     extent_ = inputData_->GetExtent();
+    //initializeLabelMap_();
+    //createOutputData_();
 
     //Run segmentation Algorithm
     startLabeling_();
@@ -36,11 +38,43 @@ void Segmentation::setInputData(vtkImageData *inData)
 
     //Get Extent (Rage of data that extracted from the original Volume)
     extent_ = inputData_->GetExtent();
+    //initializeLabelMap_();
+    //createOutputData_();
 
     //Run segmentation Algorithm
     startLabeling_();
 }
 
+void Segmentation::createOutputData_()
+{
+    LOG_DEBUG("Creating Image Data of Output Volume");
+    outputData_->SetDimensions(dimentions_[0], dimentions_[1], dimentions_[2]);
+    outputData_->SetScalarType(VTK_UNSIGNED_SHORT, outputData_->GetInformation());
+    outputData_->SetNumberOfScalarComponents(1, outputData_->GetInformation());
+    outputData_->SetExtent(extent_[0], extent_[1],
+            extent_[2], extent_[3],
+            extent_[4], extent_[5]);
+    outputData_->AllocateScalars(VTK_UNSIGNED_SHORT, 1);
+}
+
+void Segmentation::initializeLabelMap_()
+{
+    LOG_DEBUG("Initialize the points -> segment map");
+    for(int k = extent_[4] ; k <= extent_[5]; k++)
+    {
+        for(int j = extent_[2] ; j <= extent_[3]; j++)
+        {
+            for(int i = extent_[0] ; i <= extent_[1]; i++)
+            {
+                if(inputData_->GetScalarComponentAsDouble(i, j, k, 0) > 0)
+                {
+                    int ijk[3] = {i, j,k};
+                    pointsLabels_[inputData_->ComputePointId(ijk)] = -1;
+                }
+            }
+        }
+    }
+}
 void Segmentation::startLabeling_()
 {
     LOG_DEBUG("Start Labeling");
@@ -116,10 +150,12 @@ int Segmentation::createSegment()
 {
     LOG_DEBUG("Creating a new Segment with id = %d", currentId_);
     Segment newSegment;
+    mutex_.lock();
     newSegment.id_ = currentId_;
     newSegment.pointsCount_ = 1;
     segmentsList_->push_back(newSegment);
     currentId_++;
+    mutex_.unlock();
 
     return newSegment.id_;
 }
@@ -137,11 +173,19 @@ int Segmentation::updateSegmentsList(QSet<int> segmentsIds)
     for(int it : segmentsIds)
     {
         if(it == minId)
+        {
+            mutex_.lock();
             segmentsList_->at(it).pointsCount_++;
+            mutex_.unlock();
+        }
         for(int it2 : segmentsIds)
         {
             if(it2 != it )
+            {
+                mutex_.lock();
                 segmentsList_->at(it).connectedSegmentsIds_.insert(it2);
+                mute  
+            }
         }
     }
 

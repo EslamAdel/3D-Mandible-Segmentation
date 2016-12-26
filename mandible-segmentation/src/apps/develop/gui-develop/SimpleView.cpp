@@ -49,9 +49,17 @@ void SimpleView::on_pushButton_clicked()
     renderer_->loadData((char*) volumeDir_.toStdString().c_str());
     renderer_->rescaleData(renderer_->getScale(),
                            renderer_->getShift());
-    dataDimentions_ = renderer_->getShifter()->GetOutput()->GetDimensions();
+//    dataDimentions_ = renderer_->getShifter()->GetOutput()->GetDimensions();
+    vtkSmartPointer<vtkImageResample> sampleUp = vtkSmartPointer<vtkImageResample>::New();
+    sampleUp->SetInterpolationModeToCubic();
+    sampleUp->SetInputData(renderer_->getShifter()->GetOutput());
+    sampleUp->SetAxisMagnificationFactor(0, 1);
+    sampleUp->SetAxisMagnificationFactor(1, 1);
+    sampleUp->SetAxisMagnificationFactor(2, 0.5);
+    sampleUp->Update();
+    dataDimentions_ = sampleUp->GetOutput()->GetDimensions();
     setSliderRanges();
-    extractor_->setInputData(renderer_->getShifter()->GetOutput());
+    extractor_->setInputData(sampleUp->GetOutput());
     setExtractorRange();
 }
 
@@ -134,7 +142,13 @@ void SimpleView::on_horizontalSlider_8_sliderReleased()
 
 void SimpleView::on_pushButton_3_clicked()
 {
+    timeval start;
+    timeval end;
+    gettimeofday(&start, NULL);
     segment_->setInputData(thresholder_->getThresholdedData());
+    gettimeofday(&end, NULL);
     data_ = segment_->getSegmentedData();
     ui->qvtkWidget->GetRenderWindow()->Render();
+    printf("Segmentation Time : %f seconds \n", (float)(end.tv_sec-start.tv_sec+
+           (end.tv_usec-start.tv_usec)/1000000.0));
 }

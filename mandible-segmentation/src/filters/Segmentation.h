@@ -63,20 +63,6 @@ public:
 private:
 
     /**
-     * @brief createOutputData_
-     * Manually create a new image Data to set the output of
-     * segmentation in it.
-     */
-    void createOutputData_();
-
-    /**
-     * @brief initializeLabelMap_
-     * Initialize pointsLabels_ map that maps every none zero point to
-     * Its segment.
-     */
-    void initializeLabelMap_();
-
-    /**
      * @brief startLabeling_
      * Start labeling none zero points of the input data
      * according to the connectivity with nieghbouring points

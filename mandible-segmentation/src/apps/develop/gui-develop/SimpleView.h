@@ -11,6 +11,8 @@
 #include <ExtractVOI.h>
 #include <Thresholding.h>
 #include <Segmentation.h>
+#include <sys/time.h>
+#include <vtkImageResample.h>
 
 namespace Ui {
 class SimpleView;
