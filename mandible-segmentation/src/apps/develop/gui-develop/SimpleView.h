@@ -13,6 +13,7 @@
 #include <Segmentation.h>
 #include <sys/time.h>
 #include <vtkImageResample.h>
+#include <vtkMetaImageWriter.h>
 
 namespace Ui {
 class SimpleView;
@@ -59,6 +60,8 @@ private slots:
     void on_horizontalSlider_8_sliderReleased();
 
     void on_pushButton_3_clicked();
+
+    void on_pushButton_2_clicked();
 
 private:
     Ui::SimpleView *ui;
