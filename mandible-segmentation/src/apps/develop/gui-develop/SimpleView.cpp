@@ -55,7 +55,7 @@ void SimpleView::on_pushButton_clicked()
     sampleUp->SetInputData(renderer_->getShifter()->GetOutput());
     sampleUp->SetAxisMagnificationFactor(0, 1);
     sampleUp->SetAxisMagnificationFactor(1, 1);
-    sampleUp->SetAxisMagnificationFactor(2, 2);
+    sampleUp->SetAxisMagnificationFactor(2, 0.5);
     sampleUp->Update();
     dataDimentions_ = sampleUp->GetOutput()->GetDimensions();
     setSliderRanges();
