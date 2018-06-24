@@ -320,11 +320,6 @@ int main (int argc, char *argv[])
     // clips out objects behind the plane. This way only what is drawn
     // between the planes is actually rendered.
     aRenderer->ResetCameraClippingRange ();
-    vtkSmartPointer<vtkOBJExporter> exporter = vtkSmartPointer<vtkOBJExporter>::New();
-    exporter->SetFilePrefix("Test");
-    exporter->SetRenderWindow(renWin);
-    exporter->Update();
-    exporter->Write();
 
     // interact with data
     iren->Initialize();
