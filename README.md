@@ -4,7 +4,7 @@ An Optimized Technique of 3D Segmentation for Orthodontic Treatment Plan.
 
 Dependencies:
 
-* VTK 7.1
+* VTK 7.1 (with VTK_Group_Qt)
 * Qt5
 * OpenMP
 
